@@ -15,7 +15,7 @@ export var UNIT_TYPE_BODIES = {
     'archer':      [MOVE, MOVE, MOVE, MOVE, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK],
     // 'tank':        [TOUGH, MOVE, MOVE, MOVE, ATTACK],
     'vulture':     [MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK],
-    'field-medic': [MOVE, MOVE, HEAL, HEAL]
+    'field-medic': [MOVE, MOVE, MOVE, MOVE, HEAL, HEAL]
 };
 
 export function spawn_cost(body) {

@@ -4,6 +4,7 @@ import { UNIT_TYPE_BODIES, UNIT_BUILD_ORDER } from '../units/data.mjs';
 
 export class SpawnManager {
     static desired_next_unit_spawn_role() {
+        var my_creeps = Arena.get_my_creeps();
         var role_counts = {};
         for (var role of Object.keys(UNIT_TYPE_BODIES)) {
             var creeps_of_this_role = filter_creeps_by_role(my_creeps, role);
@@ -13,7 +14,7 @@ export class SpawnManager {
         // Always require at least 1 drone!
         if (role_counts['drone'] == 0) { return 'drone'; }
 
-        for (var role of Object.keys(UNIT_BUILD_ORDER))
+        for (var role of UNIT_BUILD_ORDER)
             if (role_counts[role] < SpawnManager.desired_number_of_role(role))
                 return role;
     }

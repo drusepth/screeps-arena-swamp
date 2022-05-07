@@ -13,7 +13,7 @@ export class Arena {
     }
 
     static get_my_creeps() {
-        return getObjectsByPrototype(Creep).filter(creep => creep.my);
+        return getObjectsByPrototype(Creep).filter(creep => creep.my && creep.exists);
     }
 
     static get_non_empty_containers() {
@@ -30,7 +30,7 @@ export class Arena {
     }
 
     static get_enemy_creeps() {
-        return getObjectsByPrototype(Creep).filter(creep => !creep.my);
+        return getObjectsByPrototype(Creep).filter(creep => !creep.my && creep.exists);
     }
 
     static get_friendly_creeps_with_role(role) {

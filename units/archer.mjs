@@ -1,5 +1,6 @@
 import { findClosestByPath } from '/game/utils';
 import { ERR_NOT_IN_RANGE, HEAL } from '/game/constants';
+import { getTicks } from 'game';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
@@ -11,11 +12,22 @@ export class UArcher extends UGeneric {
         var enemy_creeps = Arena.get_enemy_creeps();
         var my_archers   = Arena.get_friendly_creeps_with_role('archer');
 
+        if (archer.memory.hitsLastTick === undefined) {
+            archer.memory.hitsLastTick = archer.hits;
+        } else {
+            // If we were hit last tick, take a turn and fall back to spawn/reinforcements
+            var fall_back = archer.memory.hits < archer.memory.hitsLastTick;
+            archer.memory.hitsLastTick = archer.hits;
+
+            if (fall_back)
+                return archer.moveTo(Arena.get_my_spawn());
+        }
+
         if (enemy_creeps.length == 0) {
             return UArcher.attack_enemy_hive(archer);
         }
 
-        if (my_archers.length > 4 && archer.hits >= archer.hitsMax / 2) {
+        if ((my_archers.length >= 4 || getTicks() > 500) && archer.hits >= archer.hitsMax / 2) {
             return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
         } else {
             archer.moveTo(Arena.get_my_spawn());
