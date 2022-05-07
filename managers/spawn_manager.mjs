@@ -1,6 +1,6 @@
 import { Arena } from '../room/arena';
 import { filter_creeps_by_role } from '../helpers/filters';
-import { UNIT_TYPE_BODIES, UNIT_BUILD_ORDER } from './units/data.mjs';
+import { UNIT_TYPE_BODIES, UNIT_BUILD_ORDER } from '../units/data.mjs';
 
 export class SpawnManager {
     static desired_next_unit_spawn_role() {
