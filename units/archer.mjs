@@ -18,18 +18,34 @@ import { flight_distance } from '../helpers/distance';
 
 export class UArcher extends UGeneric {
     static act(archer) {
-        var enemy_creeps = getObjectsByPrototype(Creep).filter(creep => !creep.my);
+        var enemy_creeps = Arena.get_enemy_creeps();
+        var my_archers   = Arena.get_friendly_creeps_with_role('archer');
 
-        if (enemy_creeps.length > 0) {
-            return UArcher.attack_nearest_enemy_creep(archer, enemy_creeps);
-        }
+        if (my_archers.length > 4) {
+            if (enemy_creeps.length > 0) {
+                return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
+            }
 
-        if (enemy_creeps.length == 0) {
-            return UArcher.attack_enemy_hive(archer);
+            if (enemy_creeps.length == 0) {
+                return UArcher.attack_enemy_hive(archer);
+            }
+        } else {
+            archer.moveTo(Arena.get_my_spawn());
+            return UArcher.attack_all_enemy_creeps_in_range(archer);
         }
     }
 
-    static attack_nearest_enemy_creep(archer, enemy_creeps) {        
+    static attack_all_enemy_creeps_in_range(archer) {
+        archer.rangedMassAttack();
+
+        UArcher.display_action_message_with_target_line(
+            archer,
+            archer.memory.role + ': Holding our ground!',
+            archer
+        );
+    }
+
+    static hunt_nearest_enemy_creep(archer, enemy_creeps) {        
         // TODO probably want to prioritize by threat also
         var closest_enemy = findClosestByPath(archer, enemy_creeps);
 

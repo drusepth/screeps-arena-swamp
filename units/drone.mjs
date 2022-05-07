@@ -17,7 +17,7 @@ import { Arena } from '../room/arena';
 
 export class UDrone extends UGeneric {
     static act(drone) {
-        var mySpawn = getObjectsByPrototype(StructureSpawn).filter(structure => structure.my)[0];
+        var my_spawn = Arena.get_my_spawn();
         var source = getObjectsByPrototype(Source)[0];
         
         // console.log("Drone free capacity = " + drone.store.getFreeCapacity(RESOURCE_ENERGY));
@@ -46,9 +46,9 @@ export class UDrone extends UGeneric {
                     console.log('Unknown error while harvesting: ' + harvest_result);
             }
         } else {
-            if (drone.transfer(mySpawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            if (drone.transfer(my_spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 current_task = 'Returning to spawn';
-                drone.moveTo(mySpawn);
+                drone.moveTo(my_spawn);
             } else {
                 current_task = 'Unloading energy to spawn';
             }

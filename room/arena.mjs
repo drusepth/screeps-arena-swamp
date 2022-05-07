@@ -13,6 +13,10 @@ import {
 import { Visual } from '/game/visual';
 
 export class Arena {
+    static get_my_spawn() {
+        return getObjectsByPrototype(StructureSpawn).filter(structure => structure.my)[0];
+    }
+
     static get_non_empty_containers() {
         let containers = getObjectsByPrototype(StructureContainer).filter((structure) => {
             // Only look at non-owned containers that let us fill our full capacity from
@@ -24,5 +28,13 @@ export class Arena {
         });
     
         return containers;
+    }
+
+    static get_enemy_creeps() {
+        return getObjectsByPrototype(Creep).filter(creep => !creep.my);
+    }
+
+    static get_friendly_creeps_with_role(role) {
+        return getObjectsByPrototype(Creep).filter(creep => creep.my && creep.memory.role == role);
     }
 }
