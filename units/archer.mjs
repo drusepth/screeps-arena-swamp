@@ -1,22 +1,22 @@
 import { findClosestByPath } from '/game/utils';
-import { ERR_NOT_IN_RANGE } from '/game/constants';
+import { ERR_NOT_IN_RANGE, HEAL } from '/game/constants';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
+import { filter_creeps_by_body_part } from '../helpers/filters.mjs';
+import { flight_distance } from '../helpers/distance.mjs';
 
 export class UArcher extends UGeneric {
     static act(archer) {
         var enemy_creeps = Arena.get_enemy_creeps();
         var my_archers   = Arena.get_friendly_creeps_with_role('archer');
 
-        if (my_archers.length > 4 && archer.hits >= archer.hitsMax) {
-            if (enemy_creeps.length > 0) {
-                return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
-            }
+        if (enemy_creeps.length == 0) {
+            return UArcher.attack_enemy_hive(archer);
+        }
 
-            if (enemy_creeps.length == 0) {
-                return UArcher.attack_enemy_hive(archer);
-            }
+        if (my_archers.length > 4 && archer.hits >= archer.hitsMax / 2) {
+            return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
         } else {
             archer.moveTo(Arena.get_my_spawn());
             return UArcher.attack_all_enemy_creeps_in_range(archer);
@@ -34,18 +34,30 @@ export class UArcher extends UGeneric {
     }
 
     static hunt_nearest_enemy_creep(archer, enemy_creeps) {        
-        // TODO probably want to prioritize by threat also
-        var closest_enemy = findClosestByPath(archer, enemy_creeps);
+        // If there's a medic nearby, prioritize that!
+        var enemy_medics_nearby = filter_creeps_by_body_part(enemy_creeps, HEAL).filter(
+            medic => flight_distance(archer.x, archer.y, medic.x, medic.y) < 6
+        );
 
-        var attack_response = archer.rangedAttack(closest_enemy);
+        var closest_target;
+        if (enemy_medics_nearby.length > 0) {
+            console.log("Enemy medic is nearby!");
+            closest_target = findClosestByPath(archer, enemy_medics_nearby);
+
+        } else {
+            // If there are no enemy medics nearby, then just prioritize the closest enemy
+            closest_target = findClosestByPath(archer, enemy_creeps);
+        }
+
+        var attack_response = archer.rangedAttack(closest_target);
         if (attack_response == ERR_NOT_IN_RANGE)
-            archer.moveTo(closest_enemy);
+            archer.moveTo(closest_target);
 
         UArcher.display_action_message_with_target_line(
             archer,
             archer.memory.role + ': Attacking enemy unit!',
-            closest_enemy
-        );
+            closest_target
+        );        
     }
 
     static attack_enemy_hive(archer) {

@@ -1,7 +1,7 @@
 import { getObjectsByPrototype } from '/game/utils';
 import { Creep, StructureContainer, StructureSpawn } from '/game/prototypes';
 import { RESOURCE_ENERGY } from '/game/constants';
-import { filter_creeps_by_role } from '../helpers/filters.mjs';
+import { filter_creeps_by_role, filter_creeps_by_roles } from '../helpers/filters.mjs';
 
 export class Arena {
     static get_my_spawn() {
