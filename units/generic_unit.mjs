@@ -1,7 +1,3 @@
-export class GenericUnit {
-    static basetest() {
-        console.log('it base works!');
-
-        return 5;
-    }
+export class UGeneric {
+    
 }
