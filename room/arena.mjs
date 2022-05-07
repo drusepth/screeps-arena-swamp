@@ -1,14 +1,7 @@
-import {
-    getObjectsByPrototype, findClosestByPath
-} from '/game/utils';
-import { 
-    Creep, Source, 
-    Structure, StructureContainer, StructureSpawn
-} from '/game/prototypes';
-import {
-    RESOURCE_ENERGY,
-    OK, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET
-} from '/game/constants';
+import { getObjectsByPrototype } from '/game/utils';
+import { Creep, StructureContainer, StructureSpawn } from '/game/prototypes';
+import { RESOURCE_ENERGY } from '/game/constants';
+import { filter_creeps_by_role } from '../helpers/filters.mjs';
 
 export class Arena {
     static get_my_spawn() {
@@ -41,6 +34,10 @@ export class Arena {
     }
 
     static get_friendly_creeps_with_role(role) {
-        return getObjectsByPrototype(Creep).filter(creep => creep.my && creep.memory.role == role);
+        return filter_creeps_by_role(this.get_my_creeps(), role);
+    }
+
+    static get_friendly_creeps_with_roles(roles) {
+        return filter_creeps_by_roles(this.get_my_creeps(), roles);
     }
 }

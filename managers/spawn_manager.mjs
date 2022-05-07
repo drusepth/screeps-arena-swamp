@@ -1,19 +1,4 @@
-import {
-    getObjectsByPrototype, findClosestByPath
-} from '/game/utils';
-import { 
-    Creep, Source, 
-    Structure, StructureContainer, StructureSpawn
-} from '/game/prototypes';
-import {
-    MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, TOUGH, BODYPART_COST,
-    RESOURCE_ENERGY,
-    OK, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET
-} from '/game/constants';
-import { Visual } from '/game/visual';
-
 import { Arena } from '../room/arena';
-import { UNIT_TYPE_BODIES, spawn_cost } from '../units/data';
 import { filter_creeps_by_role } from '../helpers/filters';
 
 export class SpawnManager {
@@ -30,7 +15,7 @@ export class SpawnManager {
             return 'drone';
         else if (my_field_medics.length < SpawnManager.desired_number_of_role('field-medic'))
             return 'field-medic';
-        else if (my_archers.length < 10)
+        else if (my_archers.length < SpawnManager.desired_number_of_role('archer'))
             return 'archer';
     }
 

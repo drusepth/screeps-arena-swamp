@@ -1,23 +1,15 @@
-import {
-    getObjectsByPrototype, findClosestByPath
-} from '/game/utils';
-import { 
-    Creep, Source, 
-    Structure, StructureContainer, StructureSpawn
-} from '/game/prototypes';
-import { OK, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET } from '/game/constants';
-import { Visual } from '/game/visual';
+import { findClosestByPath } from '/game/utils';
+import { ERR_NOT_IN_RANGE } from '/game/constants';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
-import { flight_distance } from '../helpers/distance';
 
 export class UArcher extends UGeneric {
     static act(archer) {
         var enemy_creeps = Arena.get_enemy_creeps();
         var my_archers   = Arena.get_friendly_creeps_with_role('archer');
 
-        if (my_archers.length > 4) {
+        if (my_archers.length > 4 && archer.hits >= archer.hitsMax) {
             if (enemy_creeps.length > 0) {
                 return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
             }
