@@ -1,16 +1,5 @@
-import {
-    getObjectsByPrototype, findClosestByPath
-} from '/game/utils';
-import { 
-    Creep, Source, 
-    Structure, StructureContainer, StructureSpawn
-} from '/game/prototypes';
-import {
-    MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, TOUGH, BODYPART_COST,
-    RESOURCE_ENERGY,
-    OK, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET
-} from '/game/constants';
-import { Visual } from '/game/visual';
+import { getObjectsByPrototype } from '/game/utils';
+import { Creep } from '/game/prototypes';
 
 import { UDrone } from './units/drone';
 import { UArcher } from './units/archer';
@@ -18,27 +7,26 @@ import { UFieldMedic } from './units/field_medic';
 import { BHive }  from './buildings/hive';
 import { Arena } from './room/arena';
 
-import { UNIT_TYPE_BODIES } from './units/data.mjs';
+import { SpawnManager } from './managers/spawn_manager.mjs';
+import { filter_creeps_by_role } from './helpers/filters.mjs';
 
-export function loop() {    
-    var mySpawn = getObjectsByPrototype(StructureSpawn).filter(structure => structure.my)[0];
+export function loop() {
+    var my_creeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
+    var my_drones  = filter_creeps_by_role(my_creeps, 'drone');
+    var my_archers = filter_creeps_by_role(my_creeps, 'archer');
+    var my_medics  = filter_creeps_by_role(my_creeps, 'field-medic');
 
-    var myCreeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
-    var myDrones  = myCreeps.filter(creep => creep.memory.role == 'drone');
-    var myArchers = myCreeps.filter(creep => creep.memory.role == 'archer');
-    var myMedics = myCreeps.filter(creep => creep.memory.role == 'field-medic');
-
-    console.log("Drone count: " + myDrones.length + "/" + BHive.desired_number_of_drones());
-    console.log("Archer count: " + myArchers.length);
-    console.log("Medic count: " + myMedics.length);
+    console.log(`Drone count: ${my_drones.length} / ${SpawnManager.desired_number_of_role('drone')}`);
+    console.log(`Archer count: ${my_archers.length} / ${SpawnManager.desired_number_of_role('archer')}`);
+    console.log(`Medic count: ${my_medics.length} / ${SpawnManager.desired_number_of_role('field-medic')}`);
 
     // Queue building logic
-    BHive.act(mySpawn);
+    BHive.act(Arena.get_my_spawn());
 
     // Queue creep logic
-    for (var drone  of myDrones)  { UDrone.act(drone); }
-    for (var archer of myArchers) { UArcher.act(archer); }
-    for (var medic of myMedics)   { UFieldMedic.act(medic); }
+    for (var drone  of my_drones)  { UDrone.act(drone); }
+    for (var archer of my_archers) { UArcher.act(archer); }
+    for (var medic of my_medics)   { UFieldMedic.act(medic); }
 }
 
 
