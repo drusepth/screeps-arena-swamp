@@ -22,7 +22,7 @@ export class ConstructionManager {
     static create_next_construction_site() {
         var my_spawn        = Arena.get_my_spawn();
         var my_ramparts     = ConstructionManager.get_my_ramparts();
-        var full_containers = Arena.get_mostly_full_containers_away_from(my_spawn, BHive.secured_base_radius());
+        var full_containers = Arena.get_mostly_full_containers_away_from(my_spawn, BHive.hive_radius());
 
         // 1. If we don't have a rampart yet, start construction of one at our spawn.
         if (my_ramparts.length == 0) {

@@ -13,7 +13,7 @@ import { ConstructionManager } from '../managers/construction_manager';
 export class UBuilder extends UGeneric {
     static act(builder) {
         var my_spawn        = Arena.get_my_spawn();
-        var full_containers = Arena.get_mostly_full_containers_away_from(my_spawn, BHive.secured_base_radius());
+        var full_containers = Arena.get_mostly_full_containers_away_from(my_spawn, BHive.hive_radius());
         var my_useful_sites = ConstructionManager.get_my_construction_sites().filter((site) => {
             switch (site.structure.constructor.name) {
                 case 'StructureRampart':
