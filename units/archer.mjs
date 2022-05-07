@@ -32,7 +32,7 @@ export class UArcher extends UGeneric {
             return UArcher.attack_enemy_hive(archer);
         }
 
-        if ((my_archers.length >= 4 || getTicks() > 500) && archer.hits >= archer.hitsMax / 2) {
+        if ((my_archers.length >= 4 || getTicks() > 400) && archer.hits >= archer.hitsMax / 2) {
             return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
         } else {
             archer.moveTo(Arena.get_my_spawn());
@@ -77,7 +77,10 @@ export class UArcher extends UGeneric {
 
         var attack_response = archer.rangedAttack(closest_target);
         if (attack_response == ERR_NOT_IN_RANGE) {
-            archer.heal(archer);
+            if (archer.hits < archer.hitsMax)
+                archer.heal(archer);
+            else
+                archer.rangedMassAttack();
             archer.moveTo(closest_target);
         }
 
@@ -92,7 +95,10 @@ export class UArcher extends UGeneric {
         var enemySpawn = Arena.get_enemy_spawn();
         var attack_response = archer.rangedAttack(enemySpawn);
         if (attack_response == ERR_NOT_IN_RANGE) {
-            archer.heal(archer);
+            if (archer.hits < archer.hitsMax)
+                archer.heal(archer);
+            else
+                archer.rangedMassAttack();
             archer.moveTo(enemySpawn);
         }
 
