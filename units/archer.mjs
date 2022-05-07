@@ -12,15 +12,20 @@ export class UArcher extends UGeneric {
         var enemy_creeps = Arena.get_enemy_creeps();
         var my_archers   = Arena.get_friendly_creeps_with_role('archer');
 
-        if (archer.memory.hitsLastTick === undefined) {
-            archer.memory.hitsLastTick = archer.hits;
+        if (archer.memory.hits_last_tick === undefined) {
+            archer.memory.hits_last_tick = archer.hits;
+            archer.memory.fear_ticks     = 0;
         } else {
             // If we were hit last tick, take a turn and fall back to spawn/reinforcements
-            var fall_back = archer.memory.hits < archer.memory.hitsLastTick;
-            archer.memory.hitsLastTick = archer.hits;
+            var fall_back = archer.memory.fear_ticks > 0 || archer.hits < archer.memory.hits_last_tick;
+            archer.memory.hits_last_tick = archer.hits;
+            archer.memory.fear_ticks--;
 
-            if (fall_back)
+            if (fall_back) {
+                archer.memory.fear_ticks = 3;
+                archer.heal(archer);
                 return archer.moveTo(Arena.get_my_spawn());
+            }
         }
 
         if (enemy_creeps.length == 0) {
@@ -36,7 +41,9 @@ export class UArcher extends UGeneric {
     }
 
     static attack_all_enemy_creeps_in_range(archer) {
-        archer.rangedMassAttack();
+        var attack_result = archer.rangedMassAttack();
+        if (attack_result == ERR_NOT_IN_RANGE)
+            archer.heal(archer);
 
         UArcher.display_action_message_with_target_line(
             archer,
@@ -61,9 +68,18 @@ export class UArcher extends UGeneric {
             closest_target = findClosestByPath(archer, enemy_creeps);
         }
 
+        // If the enemy spawn is closer to the nearest enemy, switch targets to the spawn
+        var enemy_spawn = Arena.get_enemy_spawn();
+        var distance_to_closest_enemy = flight_distance(archer.x, archer.y, closest_target.x, closest_target.y);
+        var distance_to_enemy_spawn = flight_distance(archer.x, archer.y, enemy_spawn.x, enemy_spawn.y);
+        if (distance_to_enemy_spawn <= distance_to_closest_enemy)
+            closest_target = enemy_spawn;
+
         var attack_response = archer.rangedAttack(closest_target);
-        if (attack_response == ERR_NOT_IN_RANGE)
+        if (attack_response == ERR_NOT_IN_RANGE) {
+            archer.heal(archer);
             archer.moveTo(closest_target);
+        }
 
         UArcher.display_action_message_with_target_line(
             archer,
@@ -75,8 +91,10 @@ export class UArcher extends UGeneric {
     static attack_enemy_hive(archer) {
         var enemySpawn = Arena.get_enemy_spawn();
         var attack_response = archer.rangedAttack(enemySpawn);
-        if (attack_response == ERR_NOT_IN_RANGE)
+        if (attack_response == ERR_NOT_IN_RANGE) {
+            archer.heal(archer);
             archer.moveTo(enemySpawn);
+        }
 
         UArcher.display_action_message_with_target_line(
             archer,
