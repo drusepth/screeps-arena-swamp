@@ -9,7 +9,7 @@ export var UNIT_BUILD_ORDER = [
 export var UNIT_TYPE_BODIES = {
     // Macro:
     'drone':   [MOVE, MOVE, CARRY, CARRY],
-    'builder': [CARRY, WORK, MOVE, MOVE, MOVE, MOVE],
+    'builder': [CARRY, CARRY, CARRY, CARRY, WORK, MOVE, MOVE, MOVE, MOVE],
 
     // Combat:
     'archer':      [MOVE, MOVE, MOVE, MOVE, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, HEAL],

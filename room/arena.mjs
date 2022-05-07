@@ -1,7 +1,8 @@
 import { getObjectsByPrototype } from '/game/utils';
 import { Creep, StructureContainer, StructureSpawn } from '/game/prototypes';
 import { RESOURCE_ENERGY } from '/game/constants';
-import { filter_creeps_by_role, filter_creeps_by_roles } from '../helpers/filters.mjs';
+import { filter_creeps_by_role, filter_creeps_by_roles } from '../helpers/filters';
+import { flight_distance } from '../helpers/distance';
 
 export class Arena {
     static get_my_spawn() {
@@ -18,14 +19,17 @@ export class Arena {
 
     static get_non_empty_containers() {
         let containers = getObjectsByPrototype(StructureContainer).filter((structure) => {
-            // Only look at non-owned containers that let us fill our full capacity from
-            // return store.energy >= drone.store.getFreeCapacity(RESOURCE_ENERGY);
-    
-            // Only harvest from containers outside of our base
-            //return flight_distance(structure.x, structure.y, mySpawn.x, mySpawn.y) > secured_base_radius();
             return structure.store[RESOURCE_ENERGY] > 0;
         });
     
+        return containers;
+    }
+
+    static get_mostly_full_containers_away_from(origin, distance) {
+        let containers = getObjectsByPrototype(StructureContainer).filter((container) => {
+            return container.store[RESOURCE_ENERGY] >= container.store.getCapacity() * 0.75
+                && flight_distance(origin.x, origin.y, container.x, container.y) > 10;
+        });
         return containers;
     }
 
