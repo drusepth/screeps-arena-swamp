@@ -5,11 +5,7 @@ import {
     Creep, Source, 
     Structure, StructureContainer, StructureSpawn
 } from '/game/prototypes';
-import {
-    MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, TOUGH, BODYPART_COST,
-    RESOURCE_ENERGY,
-    OK, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET
-} from '/game/constants';
+import { OK, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET } from '/game/constants';
 import { Visual } from '/game/visual';
 
 import { UGeneric } from './generic_unit';
@@ -61,7 +57,7 @@ export class UArcher extends UGeneric {
     }
 
     static attack_enemy_hive(archer) {
-        var enemySpawn = getObjectsByPrototype(StructureSpawn).filter(structure => !structure.my)[0];
+        var enemySpawn = Arena.get_enemy_spawn();
         var attack_response = archer.rangedAttack(enemySpawn);
         if (attack_response == ERR_NOT_IN_RANGE)
             archer.moveTo(enemySpawn);

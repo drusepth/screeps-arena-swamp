@@ -10,6 +10,7 @@ export class UFieldMedic extends UGeneric {
         var current_target = medic;
 
         var my_archers = Arena.get_friendly_creeps_with_role('archer');
+        // TODO also heal other medics
 
         var my_wounded_archers = my_archers.filter(archer => archer.hits < archer.hitsMax);
         if (my_wounded_archers.length > 0) {

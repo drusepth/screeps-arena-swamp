@@ -13,13 +13,14 @@ import {
 import { Visual } from '/game/visual';
 
 import { Arena } from '../room/arena';
-import { UNIT_TYPE_BODIES } from '../units/data';
+import { UNIT_TYPE_BODIES, spawn_cost } from '../units/data';
+import { filter_creeps_by_role } from '../helpers/filters';
 
 export class BHive {
     static act(spawn) {
         var next_unit_spawn_role = BHive.desired_next_unit_spawn_role();
         var next_unit_spawn_body = BHive.body_for_unit_role(next_unit_spawn_role);
-        var next_unit_spawn_cost = BHive.spawn_cost(next_unit_spawn_body);
+        var next_unit_spawn_cost = spawn_cost(next_unit_spawn_body);
         var energy_available = spawn.store[RESOURCE_ENERGY];
 
         if (energy_available >= next_unit_spawn_cost) {
@@ -50,13 +51,16 @@ export class BHive {
     
     static desired_next_unit_spawn_role() {
         // TODO just build a map here of role => count keys/values
-        var myCreeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
-        var myDrones  = myCreeps.filter(creep => creep.memory.role == 'drone');
-        var myArchers = myCreeps.filter(creep => creep.memory.role == 'archer');
+        var my_creeps       = Arena.get_my_creeps();
+        var my_drones       = filter_creeps_by_role(my_creeps, 'drone');
+        var my_archers      = filter_creeps_by_role(my_creeps, 'archer');
+        var my_field_medics = filter_creeps_by_role(my_creeps, 'field-medic');
 
-        if (myDrones.length < BHive.desired_number_of_drones())
+        if (my_drones.length < BHive.desired_number_of_drones())
             return 'drone';
-        else if (myArchers.length < 10)
+        else if (my_field_medics.length < (my_archers.length / 3))
+            return 'field-medic';
+        else if (my_archers.length < 10)
             return 'archer';
     }
 
@@ -75,18 +79,6 @@ export class BHive {
 
     static secured_base_radius() {
         return 10;
-    }
-
-    
-    static spawn_cost(body)
-    {
-        if (body == undefined || body.length == 0) { return 0; }
-
-        let sum = 0;
-        for (var i = 0; i < body.length; i++)
-            sum += BODYPART_COST[body[i]];
-
-        return sum;
     }
 
     static desired_number_of_drones() {

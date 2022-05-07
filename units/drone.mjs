@@ -1,16 +1,8 @@
+import { findClosestByPath } from '/game/utils';
 import {
-    getObjectsByPrototype, findClosestByPath
-} from '/game/utils';
-import { 
-    Creep, Source, 
-    Structure, StructureContainer, StructureSpawn
-} from '/game/prototypes';
-import {
-    MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, TOUGH, BODYPART_COST,
     RESOURCE_ENERGY,
     OK, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET
 } from '/game/constants';
-import { Visual } from '/game/visual';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
@@ -18,11 +10,6 @@ import { Arena } from '../room/arena';
 export class UDrone extends UGeneric {
     static act(drone) {
         var my_spawn = Arena.get_my_spawn();
-        var source = getObjectsByPrototype(Source)[0];
-        
-        // console.log("Drone free capacity = " + drone.store.getFreeCapacity(RESOURCE_ENERGY));
-        // console.log("Drone total capacity = " + drone.store.getCapacity(RESOURCE_ENERGY));
-    
         var closest_container = findClosestByPath(drone, Arena.get_non_empty_containers());
         
         var current_task = 'no task';

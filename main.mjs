@@ -14,6 +14,7 @@ import { Visual } from '/game/visual';
 
 import { UDrone } from './units/drone';
 import { UArcher } from './units/archer';
+import { UFieldMedic } from './units/field_medic';
 import { BHive }  from './buildings/hive';
 import { Arena } from './room/arena';
 
@@ -25,11 +26,11 @@ export function loop() {
     var myCreeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
     var myDrones  = myCreeps.filter(creep => creep.memory.role == 'drone');
     var myArchers = myCreeps.filter(creep => creep.memory.role == 'archer');
-
-    var enemyCreeps = getObjectsByPrototype(Creep).filter(creep => !creep.my);
+    var myMedics = myCreeps.filter(creep => creep.memory.role == 'field-medic');
 
     console.log("Drone count: " + myDrones.length + "/" + BHive.desired_number_of_drones());
     console.log("Archer count: " + myArchers.length);
+    console.log("Medic count: " + myMedics.length);
 
     // Queue building logic
     BHive.act(mySpawn);
@@ -37,6 +38,7 @@ export function loop() {
     // Queue creep logic
     for (var drone  of myDrones)  { UDrone.act(drone); }
     for (var archer of myArchers) { UArcher.act(archer); }
+    for (var medic of myMedics)   { UFieldMedic.act(medic); }
 }
 
 
