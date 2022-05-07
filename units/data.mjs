@@ -2,6 +2,10 @@ import {
     MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, TOUGH, BODYPART_COST
 } from '/game/constants';
 
+export var UNIT_BUILD_ORDER = [
+    'vulture', 'drone', 'field-medic', 'archer', 'builder'
+];
+
 export var UNIT_TYPE_BODIES = {
     // Macro:
     'drone':   [MOVE, MOVE, MOVE, CARRY, CARRY, CARRY],

@@ -1,33 +1,27 @@
 import { Arena } from '../room/arena';
 import { filter_creeps_by_role } from '../helpers/filters';
+import { UNIT_TYPE_BODIES, UNIT_BUILD_ORDER } from './units/data.mjs';
 
 export class SpawnManager {
     static desired_next_unit_spawn_role() {
-        // TODO just build a map here of role => count keys/values
-        var my_creeps       = Arena.get_my_creeps();
-        var my_drones       = filter_creeps_by_role(my_creeps, 'drone');
-        var my_archers      = filter_creeps_by_role(my_creeps, 'archer');
-        var my_field_medics = filter_creeps_by_role(my_creeps, 'field-medic');
-        var my_vultures     = filter_creeps_by_role(my_creeps, 'vulture');
+        var role_counts = {};
+        for (var role of Object.keys(UNIT_TYPE_BODIES)) {
+            var creeps_of_this_role = filter_creeps_by_role(my_creeps, role);
+            role_counts[role] = creeps_of_this_role.length;
+        }
 
-        // Factor in: average distance to Containers, average move/work/carry of existing drones
+        // Always require at least 1 drone!
+        if (role_counts['drone'] == 0) { return 'drone'; }
 
-        if (my_drones.length == 0)
-            return 'drone';
-
-        if (my_vultures.length < SpawnManager.desired_number_of_role('vulture'))
-            return 'vulture';
-        else if (my_drones.length < SpawnManager.desired_number_of_role('drone'))
-            return 'drone';
-        else if (my_field_medics.length < SpawnManager.desired_number_of_role('field-medic'))
-            return 'field-medic';
-        else if (my_archers.length < SpawnManager.desired_number_of_role('archer'))
-            return 'archer';
+        for (var role of Object.keys(UNIT_BUILD_ORDER))
+            if (role_counts[role] < SpawnManager.desired_number_of_role(role))
+                return role;
     }
 
     static desired_number_of_role(role) {
         switch(role) {
             case 'drone':
+                // Factor in: average distance to Containers, average move/work/carry of existing drones
                 var drones_per_container = 0.3;
                 return Arena.get_non_empty_containers().length * drones_per_container;
 
