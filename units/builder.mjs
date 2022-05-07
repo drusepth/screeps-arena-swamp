@@ -75,8 +75,8 @@ export class UBuilder extends UGeneric {
             var build_result = builder.build(construction_site);
             if (build_result == ERR_NOT_IN_RANGE)
                 builder.moveTo(construction_site);
-
-            console.log('site build result = ' + build_result);
+            else
+                console.log('site build result = ' + build_result);
         }
 
     }

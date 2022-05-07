@@ -44,21 +44,32 @@ export class UDrone extends UGeneric {
     }
 
     static return_energy(drone) {
-        var my_spawn = Arena.get_my_spawn();
+        var my_spawn      = Arena.get_my_spawn();
+        var my_extensions = Arena.get_my_extensions();
         var current_task = 'no task';
-        var current_target = my_spawn;
-        
-        if (drone.transfer(my_spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            current_task = 'Returning to spawn';
-            drone.moveTo(my_spawn);
-        } else {
-            current_task = 'Unloading energy to spawn';
-        }
 
-        UDrone.display_action_message_with_target_line(
-            drone,
-            drone.memory.role + ': ' + current_task,
-            current_target
-        );
+        var non_full_dropoffs = my_extensions.concat(my_spawn).filter((dropoff) => {
+            var capacity = (dropoff.constructor.name == 'StructureSpawn') ? 1000 : 100;
+            return dropoff.store[RESOURCE_ENERGY] < capacity; 
+        });
+
+        if (non_full_dropoffs.length > 0) {
+            var nearest_dropoff = findClosestByPath(drone, non_full_dropoffs);
+            if (drone.transfer(nearest_dropoff, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                current_task = 'Returning to ' + nearest_dropoff.constructor.name;
+                drone.moveTo(nearest_dropoff);
+            } else {
+                current_task = 'Unloading energy to ' + nearest_dropoff.constructor.name;
+            }
+    
+            UDrone.display_action_message_with_target_line(
+                drone,
+                drone.memory.role + ': ' + current_task,
+                nearest_dropoff
+            );
+        } else {
+            // Everything is full! Maybe make drones run around as distractions or something?
+            console.log('All storage is full!');
+        }
     }
 }

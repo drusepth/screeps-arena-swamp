@@ -1,5 +1,5 @@
 import { getObjectsByPrototype } from '/game/utils';
-import { Creep, StructureContainer, StructureSpawn } from '/game/prototypes';
+import { Creep, StructureContainer, StructureSpawn, StructureExtension } from '/game/prototypes';
 import { RESOURCE_ENERGY } from '/game/constants';
 import { filter_creeps_by_role, filter_creeps_by_roles } from '../helpers/filters';
 import { flight_distance } from '../helpers/distance';
@@ -7,6 +7,10 @@ import { flight_distance } from '../helpers/distance';
 export class Arena {
     static get_my_spawn() {
         return getObjectsByPrototype(StructureSpawn).filter(structure => structure.my)[0];
+    }
+
+    static get_my_extensions() {
+        return getObjectsByPrototype(StructureExtension).filter(structure => structure.my);
     }
 
     static get_enemy_spawn() {
