@@ -38,7 +38,7 @@ export class SpawnManager {
                 return 0;
 
             case 'builder':
-                return 0;
+                return 1;
         }
     }
 }

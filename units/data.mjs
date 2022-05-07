@@ -3,7 +3,7 @@ import {
 } from '/game/constants';
 
 export var UNIT_BUILD_ORDER = [
-    'vulture', 'drone', 'field-medic', 'archer', 'builder'
+    'vulture', 'builder', 'drone', 'field-medic', 'archer'
 ];
 
 export var UNIT_TYPE_BODIES = {

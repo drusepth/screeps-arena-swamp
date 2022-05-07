@@ -22,7 +22,7 @@ export class UFieldMedic extends UGeneric {
 
             if (heal_result == ERR_NOT_IN_RANGE) {
                 medic.heal(medic);
-                medic.moveTo(closest_wounded_army_unit);
+                medic.moveTo(closest_wounded_army_unit, {visualizePathStyle: {stroke: '#ff00ff'}});
             }
         } else {
             if (my_army_units.length > 0) {
@@ -31,14 +31,14 @@ export class UFieldMedic extends UGeneric {
                 current_target = my_army_units[0];
                 var first_archer = filter_creeps_by_role(my_army_units, 'archer');
                 medic.heal(medic);
-                medic.moveTo(first_archer[0]);
+                medic.moveTo(first_archer[0], {visualizePathStyle: {stroke: '#ff00ff'}});
             } else {
                 // Go home!
                 var my_spawn = Arena.get_my_spawn();
                 current_task = "Headed home";
                 current_target = my_spawn;
                 medic.heal(medic);
-                medic.moveTo(my_spawn);
+                medic.moveTo(my_spawn, {visualizePathStyle: {stroke: '#ff00ff'}});
             }
         }
 
