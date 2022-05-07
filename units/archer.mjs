@@ -21,8 +21,8 @@ export class UArcher extends UGeneric {
             archer.memory.hits_last_tick = archer.hits;
             archer.memory.fear_ticks--;
 
-            if (fall_back) {
-                archer.memory.fear_ticks = 3;
+            if (fall_back && archer.hits < archer.hitsMax / 2) {
+                archer.memory.fear_ticks = 1;
                 archer.heal(archer);
                 return archer.moveTo(Arena.get_my_spawn());
             }
