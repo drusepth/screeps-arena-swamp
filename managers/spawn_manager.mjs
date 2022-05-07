@@ -8,10 +8,16 @@ export class SpawnManager {
         var my_drones       = filter_creeps_by_role(my_creeps, 'drone');
         var my_archers      = filter_creeps_by_role(my_creeps, 'archer');
         var my_field_medics = filter_creeps_by_role(my_creeps, 'field-medic');
+        var my_vultures     = filter_creeps_by_role(my_creeps, 'vulture');
 
         // Factor in: average distance to Containers, average move/work/carry of existing drones
 
-        if (my_drones.length < SpawnManager.desired_number_of_role('drone'))
+        if (my_drones.length == 0)
+            return 'drone';
+
+        if (my_vultures.length < SpawnManager.desired_number_of_role('vulture'))
+            return 'vulture';
+        else if (my_drones.length < SpawnManager.desired_number_of_role('drone'))
             return 'drone';
         else if (my_field_medics.length < SpawnManager.desired_number_of_role('field-medic'))
             return 'field-medic';
@@ -32,6 +38,12 @@ export class SpawnManager {
 
             case 'archer':
                 return 10;
+
+            case 'vulture':
+                return 0;
+
+            case 'builder':
+                return 0;
         }
     }
 }
