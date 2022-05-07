@@ -53,21 +53,11 @@ export class UDrone extends UGeneric {
                 current_task = 'Unloading energy to spawn';
             }
         }
-        
-        if (!drone.taskDescriptionVisual) { drone.taskDescriptionVisual = new Visual(1, true); }
-        drone.taskDescriptionVisual.clear().text(
+
+        UDrone.display_action_message_with_target_line(
+            drone,
             drone.memory.role + ': ' + current_task,
-            { x: drone.x, y: drone.y - 0.5 }, // above the creep
-            {
-                font: '0.5',
-                opacity: 0.7,
-                backgroundColor: '#808080',
-                backgroundPadding: '0.03'
-            }
-        ).line(
-            { x: drone.x, y: drone.y },
-            { x: current_target.x, y: current_target.y },
-            { color: '#0000ff', lineStyle: 'dotted', opacity: 0.75 }
+            current_target
         );
     }
 }

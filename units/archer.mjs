@@ -14,33 +14,46 @@ import { Visual } from '/game/visual';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
+import { flight_distance } from '../helpers/distance';
 
 export class UArcher extends UGeneric {
     static act(archer) {
-        // TODO probably want to prioritize by threat also
-        var enemyCreeps = getObjectsByPrototype(Creep).filter(creep => !creep.my);
-        if (enemyCreeps.length > 0) {
-            var closest_enemy = enemyCreeps[0];
-            if (enemyCreeps.length > 1) {
-                console.log(archer);
-                var min_distance = archer.pos.getRangeTo(enemyCreeps[0]);
-                for (var i = 1; i < enemyCreeps.length; i++) {
-                    var distance_to_enemy = archer.pos.getRangeTo(enemyCreeps[i]);
-                        if (distance_to_enemy < min_distance) {
-                        closest_enemy = enemyCreeps[i];
-                    }
-                }
+        var enemy_creeps = getObjectsByPrototype(Creep).filter(creep => !creep.my);
+
+        if (enemy_creeps.length > 0) {
+            return UArcher.attack_nearest_enemy_creep(archer, enemy_creeps);
         }
+
+        if (enemy_creeps.length == 0) {
+            return UArcher.attack_enemy_hive(archer);
+        }
+    }
+
+    static attack_nearest_enemy_creep(archer, enemy_creeps) {        
+        // TODO probably want to prioritize by threat also
+        var closest_enemy = findClosestByPath(archer, enemy_creeps);
+
         var attack_response = archer.rangedAttack(closest_enemy);
         if (attack_response == ERR_NOT_IN_RANGE)
             archer.moveTo(closest_enemy);
-        return;
-        }
 
-        console.log('Attacking enemy spawn!');
+        UArcher.display_action_message_with_target_line(
+            archer,
+            archer.memory.role + ': Attacking enemy unit!',
+            closest_enemy
+        );
+    }
+
+    static attack_enemy_hive(archer) {
         var enemySpawn = getObjectsByPrototype(StructureSpawn).filter(structure => !structure.my)[0];
         var attack_response = archer.rangedAttack(enemySpawn);
         if (attack_response == ERR_NOT_IN_RANGE)
             archer.moveTo(enemySpawn);
+
+        UArcher.display_action_message_with_target_line(
+            archer,
+            archer.memory.role + ': Attacking enemy hive!',
+            enemySpawn
+        );
     }
 }
