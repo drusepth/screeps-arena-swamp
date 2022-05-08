@@ -1,4 +1,4 @@
-import { getObjectsByPrototype } from '/game/utils';
+import { getObjectsByPrototype, getTicks } from '/game/utils';
 import { Creep } from '/game/prototypes';
 
 import { UDrone } from './units/drone';
@@ -15,6 +15,10 @@ import { UNIT_TYPE_BODIES } from './units/data.mjs';
 import { UGeneric } from './units/generic_unit.mjs';
 
 export function loop() {
+    if (getTicks() == 1) {
+        // Build whatever one-time tables/maps based on room we need
+    }
+
     var my_creeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
     
     // Queue building logic
@@ -29,6 +33,3 @@ export function loop() {
             UnitManager.act(creep);
     }
 }
-
-
-

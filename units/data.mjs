@@ -12,7 +12,7 @@ export var UNIT_TYPE_BODIES = {
     'builder': [CARRY, CARRY, CARRY, CARRY, WORK, MOVE, MOVE, MOVE, MOVE],
 
     // Combat:
-    'archer':      [MOVE, MOVE, MOVE, MOVE, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, HEAL],
+    'archer':      [MOVE, MOVE, MOVE, MOVE, RANGED_ATTACK, RANGED_ATTACK, MOVE, HEAL],
     // 'tank':        [TOUGH, MOVE, MOVE, MOVE, ATTACK],
     'vulture':     [MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK],
     'field-medic': [MOVE, MOVE, MOVE, MOVE, HEAL, HEAL]

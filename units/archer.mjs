@@ -21,8 +21,13 @@ export class UArcher extends UGeneric {
             archer.memory.hits_last_tick = archer.hits;
             archer.memory.fear_ticks--;
 
-            if (fall_back && archer.hits < archer.hitsMax / 2) {
-                archer.memory.fear_ticks = 1;
+            // If we've already healed back up, shed the fear immediately
+            if (archer.hits > archer.hitsMax * 0.7)
+                fall_back = false;
+
+            if (fall_back && archer.hits < archer.hitsMax * 0.7) {
+                var ticks_to_fully_heal = 2; // todo
+                archer.memory.fear_ticks = ticks_to_fully_heal;
                 archer.heal(archer);
                 return archer.moveTo(Arena.get_my_spawn());
             }
@@ -32,10 +37,16 @@ export class UArcher extends UGeneric {
             return UArcher.attack_enemy_hive(archer);
         }
 
-        if ((my_archers.length >= 4 || getTicks() > 400) && archer.hits >= archer.hitsMax / 2) {
+        if ((my_archers.length >= 5 || getTicks() > 400) && archer.hits >= archer.hitsMax / 2) {
             return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
         } else {
-            archer.moveTo(Arena.get_my_spawn());
+            var spawn = Arena.get_my_spawn();
+            var distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);            
+            // If we're NEAR spawn, then just loosely circle around it
+            if (distance_to_spawn < 20) {
+                return archer.moveTo(spawn, { range: 5, flee: true });
+            }
+
             return UArcher.attack_all_enemy_creeps_in_range(archer);
         }
     }
