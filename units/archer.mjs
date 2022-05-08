@@ -1,46 +1,46 @@
 import { findClosestByPath } from '/game/utils';
 import { ERR_NOT_IN_RANGE, HEAL } from '/game/constants';
-import { getTicks } from 'game';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
-import { filter_creeps_by_body_part } from '../helpers/filters.mjs';
-import { flight_distance } from '../helpers/distance.mjs';
+import { filter_creeps_by_body_part } from '../helpers/filters';
+import { flight_distance } from '../helpers/distance';
+import { WarManager } from '../managers/war_manager';
 
 export class UArcher extends UGeneric {
     static act(archer) {
         var enemy_creeps = Arena.get_enemy_creeps();
-        var my_archers   = Arena.get_friendly_creeps_with_role('archer');
 
-        if (archer.memory.hits_last_tick === undefined) {
-            archer.memory.hits_last_tick = archer.hits;
-            archer.memory.fear_ticks     = 0;
-        } else {
-            // Health minimum before running away
-            var fear_health_threshold = 0.5;
+        if (archer.memory.hits_last_tick === undefined)
+            this.set_default_memory(archer);
 
-            // If we were hit last tick, take a turn and fall back to spawn/reinforcements
-            var fall_back = archer.memory.fear_ticks > 0 || archer.hits < archer.memory.hits_last_tick;
-            archer.memory.hits_last_tick = archer.hits;
-            archer.memory.fear_ticks--;
+        // Health minimum before running away
+        var fear_health_threshold = 0.5;
 
-            // If we've already healed back up, shed the fear immediately
-            if (archer.hits > archer.hitsMax * fear_health_threshold)
-                fall_back = false;
+        // If we were hit last tick, take a turn and fall back to spawn/reinforcements
+        var fall_back = archer.memory.fear_ticks > 0 || archer.hits < archer.memory.hits_last_tick;
+        archer.memory.hits_last_tick = archer.hits;
+        archer.memory.fear_ticks--;
 
-            if (fall_back && archer.hits < archer.hitsMax * fear_health_threshold) {
-                var ticks_to_fully_heal = 2; // todo
-                archer.memory.fear_ticks = ticks_to_fully_heal;
+        // If we've already healed back up, shed the fear immediately
+        if (archer.hits > archer.hitsMax * fear_health_threshold)
+            fall_back = false;
+
+        if (fall_back && archer.hits < archer.hitsMax * fear_health_threshold) {
+            var ticks_to_fully_heal = 2; // todo
+            archer.memory.fear_ticks = ticks_to_fully_heal;
+
+            if (archer.hits < archer.hitsMax)
                 archer.heal(archer);
-                return archer.moveTo(Arena.get_my_spawn());
-            }
+
+            return archer.moveTo(Arena.get_my_spawn());
         }
 
         if (enemy_creeps.length == 0) {
             return UArcher.attack_enemy_hive(archer);
         }
 
-        if ((my_archers.length >= 5 || getTicks() > 400) && archer.hits >= archer.hitsMax / 2) {
+        if (WarManager.predicted_victory() && archer.hits >= archer.hitsMax / 2) {
             return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
         } else {
             var spawn = Arena.get_my_spawn();
@@ -52,6 +52,11 @@ export class UArcher extends UGeneric {
 
             return UArcher.attack_all_enemy_creeps_in_range(archer);
         }
+    }
+
+    static set_default_memory(archer) {
+        archer.memory.hits_last_tick = archer.hits;
+        archer.memory.fear_ticks     = 0;
     }
 
     static attack_all_enemy_creeps_in_range(archer) {
