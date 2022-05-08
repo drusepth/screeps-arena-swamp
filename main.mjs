@@ -7,12 +7,13 @@ import { UFieldMedic } from './units/field_medic';
 import { BHive }  from './buildings/hive';
 import { Arena } from './room/arena';
 
-import { SpawnManager } from './managers/spawn_manager.mjs';
-import { UnitManager } from './managers/unit_manager.mjs';
+import { SpawnManager } from './managers/spawn_manager';
+import { UnitManager } from './managers/unit_manager';
 
-import { filter_creeps_by_role } from './helpers/filters.mjs';
-import { UNIT_TYPE_BODIES } from './units/data.mjs';
-import { UGeneric } from './units/generic_unit.mjs';
+import { filter_creeps_by_role } from './helpers/filters';
+import { UNIT_TYPE_BODIES } from './units/data';
+import { UGeneric } from './units/generic_unit';
+import { ThreatManager } from './managers/threat_manager';
 
 export function loop() {
     if (getTicks() == 1) {
@@ -20,6 +21,9 @@ export function loop() {
     }
 
     var my_creeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
+
+    // Print reports
+    ThreatManager.print_threat_report();
     
     // Queue building logic
     BHive.act(Arena.get_my_spawn());

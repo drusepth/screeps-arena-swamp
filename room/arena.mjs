@@ -1,7 +1,7 @@
 import { getObjectsByPrototype } from '/game/utils';
 import { Creep, StructureContainer, StructureSpawn, StructureExtension } from '/game/prototypes';
 import { RESOURCE_ENERGY } from '/game/constants';
-import { filter_creeps_by_role, filter_creeps_by_roles } from '../helpers/filters';
+import { filter_creeps_by_role, filter_creeps_by_roles, filter_creeps_by_body_part, filter_creeps_by_body_parts } from '../helpers/filters';
 import { flight_distance } from '../helpers/distance';
 
 export class Arena {
@@ -47,5 +47,21 @@ export class Arena {
 
     static get_friendly_creeps_with_roles(roles) {
         return filter_creeps_by_roles(this.get_my_creeps(), roles);
+    }
+
+    static get_enemy_creeps_with_body_part(body_part) {
+        return filter_creeps_by_body_part(this.get_enemy_creeps(), body_part);
+    }
+
+    static get_enemy_creeps_with_body_parts(body_parts) {
+        return filter_creeps_by_body_parts(this.get_enemy_creeps(), body_parts);
+    }
+
+    static get_my_creeps_with_body_part(body_part) {
+        return filter_creeps_by_body_part(this.get_my_creeps(), body_part);
+    }
+
+    static get_my_creeps_with_body_parts(body_parts) {
+        return filter_creeps_by_body_parts(this.get_my_creeps(), body_parts);
     }
 }
