@@ -49,12 +49,17 @@ export class UBuilder extends UGeneric {
         } else {
             // If there are no existing construction sites, we should find something new to build.
             var new_site = ConstructionManager.create_next_construction_site();
-            builder.moveTo(new_site);
+            if (new_site) {
+                builder.moveTo(new_site);
 
-            UBuilder.display_action_message_with_target_line(builder,
-                builder.memory.role + ': Headed to new construction site',
-                builder
-            );
+                UBuilder.display_action_message_with_target_line(builder,
+                    builder.memory.role + ': Headed to new construction site',
+                    builder
+                );
+            } else {
+                // If we've made everything we dreamed of, just be a better drone
+                UDrone.act(builder);
+            }
         }
     }
 

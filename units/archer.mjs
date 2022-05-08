@@ -1,4 +1,4 @@
-import { findClosestByPath } from '/game/utils';
+import { findClosestByPath, getTicks } from '/game/utils';
 import { ERR_NOT_IN_RANGE, HEAL } from '/game/constants';
 
 import { UGeneric } from './generic_unit';
@@ -26,14 +26,14 @@ export class UArcher extends UGeneric {
         if (archer.hits > archer.hitsMax * fear_health_threshold)
             fall_back = false;
 
+        // If we don't have a sufficient army to attack, don't
+        if (getTicks() < WarManager.full_army_tick_timing())
+            return UArcher.avoid_engagements(archer);
+
         if (fall_back && archer.hits < archer.hitsMax * fear_health_threshold) {
             var ticks_to_fully_heal = 2; // todo
             archer.memory.fear_ticks = ticks_to_fully_heal;
-
-            if (archer.hits < archer.hitsMax)
-                archer.heal(archer);
-
-            return archer.moveTo(Arena.get_my_spawn());
+            return UArcher.avoid_engagements(archer);
         }
 
         if (enemy_creeps.length == 0) {
@@ -41,16 +41,9 @@ export class UArcher extends UGeneric {
         }
 
         if (WarManager.predicted_victory() && archer.hits >= archer.hitsMax / 2) {
-            return UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
+            UArcher.hunt_nearest_enemy_creep(archer, enemy_creeps);
         } else {
-            var spawn = Arena.get_my_spawn();
-            var distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);            
-            // If we're NEAR spawn, then just loosely circle around it
-            if (distance_to_spawn < 20) {
-                return archer.moveTo(spawn, { range: 5, flee: true });
-            }
-
-            return UArcher.attack_all_enemy_creeps_in_range(archer);
+            UArcher.avoid_engagements(archer);
         }
     }
 
@@ -59,10 +52,44 @@ export class UArcher extends UGeneric {
         archer.memory.fear_ticks     = 0;
     }
 
+    static avoid_engagements(archer) {
+        // TODO: we probably actually want to act more like a Vulture here
+        // and take worker pickoffs wherever we can without engaging actual army units
+
+        var spawn = Arena.get_my_spawn();
+        var distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);            
+
+        if (archer.hits < archer.hitsMax)
+            archer.heal(archer);
+
+        // While we're standing around and healing, fire arrows wildly
+        this.attack_all_enemy_creeps_in_range(archer);
+
+        // If we're NEAR spawn, then just loosely circle around it
+        if (distance_to_spawn < 10) {
+            archer.moveTo(spawn, { range: 5, flee: true });
+
+        // If we're further out from spawn, either move back towards it or collapse on a leader
+        } else {
+            var captain = Arena.get_friendly_creeps_with_role('archer')[0];
+            if (archer.hits < archer.hitsMax || archer.x == captain.x && archer.y == captain.y)
+                archer.moveTo(spawn, { range: 10 });
+            else
+                archer.moveTo(captain);
+        }
+
+        UArcher.display_action_message_with_target_line(
+            archer,
+            archer.memory.role + ': Avoiding engagements!',
+            spawn
+        );
+    }
+
     static attack_all_enemy_creeps_in_range(archer) {
         var attack_result = archer.rangedMassAttack();
         if (attack_result == ERR_NOT_IN_RANGE)
-            archer.heal(archer);
+            if (archer.hits < archer.hitsMax)
+                archer.heal(archer);
 
         UArcher.display_action_message_with_target_line(
             archer,
@@ -71,7 +98,7 @@ export class UArcher extends UGeneric {
         );
     }
 
-    static hunt_nearest_enemy_creep(archer, enemy_creeps) {        
+    static hunt_nearest_enemy_creep(archer, enemy_creeps) {
         // If there's a medic nearby, prioritize that!
         var enemy_medics_nearby = filter_creeps_by_body_part(enemy_creeps, HEAL).filter(
             medic => flight_distance(archer.x, archer.y, medic.x, medic.y) < 6
@@ -95,11 +122,13 @@ export class UArcher extends UGeneric {
             closest_target = enemy_spawn;
 
         var attack_response = archer.rangedAttack(closest_target);
+
+        // Ranged attacks and healing are in separate action pipelines and can be stacked in a tick
+        if (archer.hits < archer.hitsMax)
+            archer.heal(archer);
+
         if (attack_response == ERR_NOT_IN_RANGE) {
-            if (archer.hits < archer.hitsMax)
-                archer.heal(archer);
-            else
-                archer.rangedMassAttack();
+            archer.rangedMassAttack();
             archer.moveTo(closest_target);
         }
 
@@ -113,11 +142,12 @@ export class UArcher extends UGeneric {
     static attack_enemy_hive(archer) {
         var enemySpawn = Arena.get_enemy_spawn();
         var attack_response = archer.rangedAttack(enemySpawn);
+
+        if (archer.hits < archer.hitsMax)
+            archer.heal(archer);
+
         if (attack_response == ERR_NOT_IN_RANGE) {
-            if (archer.hits < archer.hitsMax)
-                archer.heal(archer);
-            else
-                archer.rangedMassAttack();
+            archer.rangedMassAttack();
             archer.moveTo(enemySpawn);
         }
 

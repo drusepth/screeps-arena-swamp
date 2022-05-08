@@ -1,4 +1,4 @@
-import { ATTACK, RANGED_ATTACK, WORK, CARRY, HEAL } from '/game/constants';
+import { ATTACK, RANGED_ATTACK, WORK, MOVE, TOUGH, CARRY, HEAL } from '/game/constants';
 import { Arena } from '../room/arena';
 
 export class ThreatManager {
@@ -19,17 +19,19 @@ export class ThreatManager {
     }
 
     static get_my_threat_score() {
-        var my_attackers = this.get_my_attackers();
-        var score  = this.attacker_score_multiplier() * this.get_creeps_body_part_count(my_attackers, ATTACK)
-            + this.ranged_attacker_score_multiplier() * this.get_creeps_body_part_count(my_attackers, RANGED_ATTACK);
-
-        return score;
+        return ThreatManager.calculate_threat_score(ThreatManager.get_my_attackers());        
     }
 
     static get_enemy_threat_score() {
-        var enemy_attackers = this.get_enemy_attackers();
-        var score  = this.attacker_score_multiplier() * this.get_creeps_body_part_count(enemy_attackers, ATTACK)
-            + this.ranged_attacker_score_multiplier() * this.get_creeps_body_part_count(enemy_attackers, RANGED_ATTACK);
+        return ThreatManager.calculate_threat_score(ThreatManager.get_enemy_attackers());
+    }
+
+    static calculate_threat_score(creeps) {
+        var score  = this.attacker_score_multiplier() * this.get_creeps_body_part_count(creeps, ATTACK)
+            + this.ranged_attacker_score_multiplier() * this.get_creeps_body_part_count(creeps, RANGED_ATTACK)
+            + this.heal_score_multiplier()            * this.get_creeps_body_part_count(creeps, HEAL)
+            + this.move_score_multiplier()            * this.get_creeps_body_part_count(creeps, MOVE)
+            + this.tough_score_multiplier()           * this.get_creeps_body_part_count(creeps, TOUGH);
 
         return score;
     }
@@ -43,7 +45,7 @@ export class ThreatManager {
 
         for (var creep of creeps)
             for (var i = 0; i < creep.body.length; i++)
-                if (body_parts.includes(creep.body[i].type))
+                if (body_parts.includes(creep.body[i].type) && creep.body[i].hits > 0)
                     body_part_count++;
 
         return body_part_count;
@@ -54,10 +56,22 @@ export class ThreatManager {
     }
 
     static attacker_score_multiplier() {
-        return 1.0;
+        return 80;
     }
 
     static ranged_attacker_score_multiplier() {
-        return 1.0;
+        return 130;
+    }
+
+    static heal_score_multiplier() {
+        return 250;
+    }
+
+    static move_score_multiplier() {
+        return 30;
+    }
+
+    static tough_score_multiplier() {
+        return 10;
     }
 }
