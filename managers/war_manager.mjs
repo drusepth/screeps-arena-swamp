@@ -15,8 +15,8 @@ export class WarManager {
         var enemy_threat_score = ThreatManager.get_enemy_threat_score();
 
         // After 300 ticks, we care less about the enemy threat score since we're maxed out
-        if (getTicks() > 300)
-            enemy_threat_score /= 2;
+        //if (getTicks() > 300)
+        //    enemy_threat_score /= 2;
 
         // Super rudimentary for now, should chunk this up into per-battle predictions later
         return my_threat_score > enemy_threat_score;

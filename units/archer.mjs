@@ -99,6 +99,8 @@ export class UArcher extends UGeneric {
     }
 
     static hunt_nearest_enemy_creep(archer, enemy_creeps) {
+        var enemy_spawn = Arena.get_enemy_spawn();
+
         // If there's a medic nearby, prioritize that!
         var enemy_medics_nearby = filter_creeps_by_body_part(enemy_creeps, HEAL).filter(
             medic => flight_distance(archer.x, archer.y, medic.x, medic.y) < 6
@@ -110,16 +112,9 @@ export class UArcher extends UGeneric {
             closest_target = findClosestByPath(archer, enemy_medics_nearby);
 
         } else {
-            // If there are no enemy medics nearby, then just prioritize the closest enemy
-            closest_target = findClosestByPath(archer, enemy_creeps);
+            // If there are no enemy medics nearby, then just prioritize the closest enemy/spawn
+            closest_target = findClosestByPath(archer, enemy_creeps.concat(enemy_spawn));
         }
-
-        // If the enemy spawn is closer to the nearest enemy, switch targets to the spawn
-        var enemy_spawn = Arena.get_enemy_spawn();
-        var distance_to_closest_enemy = flight_distance(archer.x, archer.y, closest_target.x, closest_target.y);
-        var distance_to_enemy_spawn = flight_distance(archer.x, archer.y, enemy_spawn.x, enemy_spawn.y);
-        if (distance_to_enemy_spawn <= distance_to_closest_enemy)
-            closest_target = enemy_spawn;
 
         var attack_response = archer.rangedAttack(closest_target);
 

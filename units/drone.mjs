@@ -3,9 +3,15 @@ import { RESOURCE_ENERGY, OK, ERR_NOT_IN_RANGE } from '/game/constants';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
+import { ThreatManager } from '../managers/threat_manager';
 
 export class UDrone extends UGeneric {
     static act(drone) {
+        // Before anything else, we want to run away from enemy threats that might hurt us!
+        let nearby_enemy_threats = ThreatManager.enemy_threats_in_range(drone, this.safety_zone());
+        if (nearby_enemy_threats.length > 0)
+            return UGeneric.flee_from_nearby_threats(drone, nearby_enemy_threats);
+
         if (drone.store.getFreeCapacity(RESOURCE_ENERGY)) {
             UDrone.acquire_energy(drone);
         } else {
