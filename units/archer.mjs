@@ -16,16 +16,19 @@ export class UArcher extends UGeneric {
             archer.memory.hits_last_tick = archer.hits;
             archer.memory.fear_ticks     = 0;
         } else {
+            // Health minimum before running away
+            var fear_health_threshold = 0.5;
+
             // If we were hit last tick, take a turn and fall back to spawn/reinforcements
             var fall_back = archer.memory.fear_ticks > 0 || archer.hits < archer.memory.hits_last_tick;
             archer.memory.hits_last_tick = archer.hits;
             archer.memory.fear_ticks--;
 
             // If we've already healed back up, shed the fear immediately
-            if (archer.hits > archer.hitsMax * 0.7)
+            if (archer.hits > archer.hitsMax * fear_health_threshold)
                 fall_back = false;
 
-            if (fall_back && archer.hits < archer.hitsMax * 0.7) {
+            if (fall_back && archer.hits < archer.hitsMax * fear_health_threshold) {
                 var ticks_to_fully_heal = 2; // todo
                 archer.memory.fear_ticks = ticks_to_fully_heal;
                 archer.heal(archer);
