@@ -26,7 +26,7 @@ export class UGeneric {
         let active_threats = [];
         nearby_threats.forEach(threat => active_threats.push({
             "pos":   { x: threat.x, y: threat.y },
-            "range": this.safety_zone() + ThreatManager.max_attack_range(threat)
+            "range": 5 * this.safety_zone() + ThreatManager.max_attack_range(threat)
         }));
         let escape_route = searchPath(creep, active_threats, { "flee": true });
         creep.moveTo(escape_route.path[0]);
@@ -38,6 +38,6 @@ export class UGeneric {
     }
 
     static safety_zone() {
-        return 3;
+        return 6;
     }
 }

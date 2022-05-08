@@ -6,13 +6,15 @@ import { Arena } from '../room/arena';
 import { filter_creeps_by_body_part } from '../helpers/filters';
 import { flight_distance } from '../helpers/distance';
 import { WarManager } from '../managers/war_manager';
+import { BHive } from '../buildings/hive';
+import { ThreatManager } from '../managers/threat_manager.mjs';
 
 export class UArcher extends UGeneric {
     static act(archer) {
-        let enemy_creeps = Arena.get_enemy_creeps();
-
         if (archer.memory.hits_last_tick === undefined)
             this.set_default_memory(archer);
+
+        let enemy_creeps = Arena.get_enemy_creeps();
 
         // Health minimum before running away
         let fear_health_threshold = 0.5;
@@ -53,11 +55,19 @@ export class UArcher extends UGeneric {
     }
 
     static avoid_engagements(archer) {
-        // TODO: we probably actually want to act more like a Vulture here
-        // and take worker pickoffs wherever we can without engaging actual army units
-
         let spawn = Arena.get_my_spawn();
-        let distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);            
+        let distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);
+
+        // Quick check here: if we're at base and there are threats nearby, we just have to engage
+        if (distance_to_spawn <= BHive.hive_radius()) {
+            let threats_in_base = ThreatManager.enemy_threats_in_range(spawn, BHive.hive_radius() + 3);
+            console.log('idling in base; threats in base: ' + threats_in_base.length);
+            if (threats_in_base.length > 0)
+                return UArcher.hunt_nearest_enemy_creep(archer, threats_in_base);
+        }
+
+        // TODO: we probably actually want to act more like a Vulture here
+        // and take worker pickoffs wherever we can without engaging actual army units            
 
         if (archer.hits < archer.hitsMax)
             archer.heal(archer);
@@ -67,7 +77,7 @@ export class UArcher extends UGeneric {
 
         // If we're NEAR spawn, then just loosely circle around it
         if (distance_to_spawn < 10) {
-            archer.moveTo(spawn, { range: 5, flee: true });
+            archer.moveTo(spawn, { range: 3, flee: true });
 
         // If we're further out from spawn, either move back towards it or collapse on a leader
         } else {
@@ -96,6 +106,10 @@ export class UArcher extends UGeneric {
             archer.memory.role + ': Holding our ground!',
             archer
         );
+    }
+
+    static hunt_near_highest_value_enemy_creep(archer, enemy_creeps) {
+        // TODO
     }
 
     static hunt_nearest_enemy_creep(archer, enemy_creeps) {
