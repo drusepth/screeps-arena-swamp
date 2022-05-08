@@ -127,15 +127,20 @@ export class UArcher extends UGeneric {
 
         } else {
             // If there are no enemy medics nearby, then just prioritize the closest enemy/spawn
-            closest_target = findClosestByPath(archer, enemy_creeps.concat(enemy_spawn));
+            closest_target = findClosestByPath(archer, enemy_creeps);
         }
 
-        let attack_response = archer.rangedAttack(closest_target);
+        // If the enemy spawn is even closer than our closest target... hit it instead!
+        let distance_to_closest_enemy = flight_distance(archer.x, archer.y, closest_target.x, closest_target.y);
+        let distance_to_enemy_spawn   = flight_distance(archer.x, archer.y, enemy_spawn.x, enemy_spawn.y);
+        if (distance_to_enemy_spawn <= distance_to_closest_enemy)
+            closest_target = enemy_spawn;
 
         // Ranged attacks and healing are in separate action pipelines and can be stacked in a tick
         if (archer.hits < archer.hitsMax)
             archer.heal(archer);
 
+        let attack_response = archer.rangedAttack(closest_target);
         if (attack_response == ERR_NOT_IN_RANGE) {
             archer.rangedMassAttack();
             archer.moveTo(closest_target);
