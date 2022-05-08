@@ -20,11 +20,11 @@ export class UDrone extends UGeneric {
     }
 
     static acquire_energy(drone) {
-        var current_task = 'no task';
-        var current_target = drone;
+        let current_task = 'no task';
+        let current_target = drone;
 
-        var closest_container = findClosestByPath(drone, Arena.get_non_empty_containers());
-        var harvest_result = drone.withdraw(closest_container, RESOURCE_ENERGY);
+        let closest_container = findClosestByPath(drone, Arena.get_non_empty_containers());
+        let harvest_result = drone.withdraw(closest_container, RESOURCE_ENERGY);
         switch (harvest_result) {
             case OK:
                 current_task = 'Harvesting from container';
@@ -50,17 +50,17 @@ export class UDrone extends UGeneric {
     }
 
     static return_energy(drone) {
-        var my_spawn      = Arena.get_my_spawn();
-        var my_extensions = Arena.get_my_extensions();
-        var current_task = 'no task';
+        let my_spawn      = Arena.get_my_spawn();
+        let my_extensions = Arena.get_my_extensions();
+        let current_task = 'no task';
 
-        var non_full_dropoffs = my_extensions.concat(my_spawn).filter((dropoff) => {
-            var capacity = (dropoff.constructor.name == 'StructureSpawn') ? 1000 : 100;
+        let non_full_dropoffs = my_extensions.concat(my_spawn).filter((dropoff) => {
+            let capacity = (dropoff.constructor.name == 'StructureSpawn') ? 1000 : 100;
             return dropoff.store[RESOURCE_ENERGY] < capacity; 
         });
 
         if (non_full_dropoffs.length > 0) {
-            var nearest_dropoff = findClosestByPath(drone, non_full_dropoffs);
+            let nearest_dropoff = findClosestByPath(drone, non_full_dropoffs);
             if (drone.transfer(nearest_dropoff, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 current_task = 'Returning to ' + nearest_dropoff.constructor.name;
                 drone.moveTo(nearest_dropoff);

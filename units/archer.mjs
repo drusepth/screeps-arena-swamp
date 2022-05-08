@@ -9,16 +9,16 @@ import { WarManager } from '../managers/war_manager';
 
 export class UArcher extends UGeneric {
     static act(archer) {
-        var enemy_creeps = Arena.get_enemy_creeps();
+        let enemy_creeps = Arena.get_enemy_creeps();
 
         if (archer.memory.hits_last_tick === undefined)
             this.set_default_memory(archer);
 
         // Health minimum before running away
-        var fear_health_threshold = 0.5;
+        let fear_health_threshold = 0.5;
 
         // If we were hit last tick, take a turn and fall back to spawn/reinforcements
-        var fall_back = archer.memory.fear_ticks > 0 || archer.hits < archer.memory.hits_last_tick;
+        let fall_back = archer.memory.fear_ticks > 0 || archer.hits < archer.memory.hits_last_tick;
         archer.memory.hits_last_tick = archer.hits;
         archer.memory.fear_ticks--;
 
@@ -31,7 +31,7 @@ export class UArcher extends UGeneric {
             return UArcher.avoid_engagements(archer);
 
         if (fall_back && archer.hits < archer.hitsMax * fear_health_threshold) {
-            var ticks_to_fully_heal = 2; // todo
+            let ticks_to_fully_heal = 2; // todo
             archer.memory.fear_ticks = ticks_to_fully_heal;
             return UArcher.avoid_engagements(archer);
         }
@@ -56,8 +56,8 @@ export class UArcher extends UGeneric {
         // TODO: we probably actually want to act more like a Vulture here
         // and take worker pickoffs wherever we can without engaging actual army units
 
-        var spawn = Arena.get_my_spawn();
-        var distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);            
+        let spawn = Arena.get_my_spawn();
+        let distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);            
 
         if (archer.hits < archer.hitsMax)
             archer.heal(archer);
@@ -71,7 +71,7 @@ export class UArcher extends UGeneric {
 
         // If we're further out from spawn, either move back towards it or collapse on a leader
         } else {
-            var captain = Arena.get_friendly_creeps_with_role('archer')[0];
+            let captain = Arena.get_friendly_creeps_with_role('archer')[0];
             if (archer.hits < archer.hitsMax || archer.x == captain.x && archer.y == captain.y)
                 archer.moveTo(spawn, { range: 10 });
             else
@@ -86,7 +86,7 @@ export class UArcher extends UGeneric {
     }
 
     static attack_all_enemy_creeps_in_range(archer) {
-        var attack_result = archer.rangedMassAttack();
+        let attack_result = archer.rangedMassAttack();
         if (attack_result == ERR_NOT_IN_RANGE)
             if (archer.hits < archer.hitsMax)
                 archer.heal(archer);
@@ -99,14 +99,14 @@ export class UArcher extends UGeneric {
     }
 
     static hunt_nearest_enemy_creep(archer, enemy_creeps) {
-        var enemy_spawn = Arena.get_enemy_spawn();
+        let enemy_spawn = Arena.get_enemy_spawn();
 
         // If there's a medic nearby, prioritize that!
-        var enemy_medics_nearby = filter_creeps_by_body_part(enemy_creeps, HEAL).filter(
+        let enemy_medics_nearby = filter_creeps_by_body_part(enemy_creeps, HEAL).filter(
             medic => flight_distance(archer.x, archer.y, medic.x, medic.y) < 6
         );
 
-        var closest_target;
+        let closest_target;
         if (enemy_medics_nearby.length > 0) {
             console.log("Enemy medic is nearby!");
             closest_target = findClosestByPath(archer, enemy_medics_nearby);
@@ -116,7 +116,7 @@ export class UArcher extends UGeneric {
             closest_target = findClosestByPath(archer, enemy_creeps.concat(enemy_spawn));
         }
 
-        var attack_response = archer.rangedAttack(closest_target);
+        let attack_response = archer.rangedAttack(closest_target);
 
         // Ranged attacks and healing are in separate action pipelines and can be stacked in a tick
         if (archer.hits < archer.hitsMax)
@@ -135,8 +135,8 @@ export class UArcher extends UGeneric {
     }
 
     static attack_enemy_hive(archer) {
-        var enemySpawn = Arena.get_enemy_spawn();
-        var attack_response = archer.rangedAttack(enemySpawn);
+        let enemySpawn = Arena.get_enemy_spawn();
+        let attack_response = archer.rangedAttack(enemySpawn);
 
         if (archer.hits < archer.hitsMax)
             archer.heal(archer);

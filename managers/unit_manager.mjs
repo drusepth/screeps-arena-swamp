@@ -1,8 +1,8 @@
 import { UDrone } from '../units/drone';
 import { UArcher } from '../units/archer';
 import { UFieldMedic } from '../units/field_medic';
-import { UVulture } from '../units/vulture.mjs';
-import { UBuilder } from '../units/builder.mjs';
+import { UVulture } from '../units/vulture';
+import { UBuilder } from '../units/builder';
 
 export class UnitManager {
     static act(creep) {

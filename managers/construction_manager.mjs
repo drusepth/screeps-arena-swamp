@@ -32,10 +32,10 @@ export class ConstructionManager {
     }
 
     static create_next_construction_site() {
-        var my_spawn         = Arena.get_my_spawn();
-        var my_ramparts      = ConstructionManager.get_my_ramparts();
-        var full_containers  = Arena.get_mostly_full_containers_away_from(my_spawn, BHive.hive_radius());
-        var empty_extensions = ConstructionManager.get_my_empty_extensions();
+        let my_spawn         = Arena.get_my_spawn();
+        let my_ramparts      = ConstructionManager.get_my_ramparts();
+        let full_containers  = Arena.get_mostly_full_containers_away_from(my_spawn, BHive.hive_radius());
+        let empty_extensions = ConstructionManager.get_my_empty_extensions();
 
         // 1. If we don't have a rampart yet, start construction of one at our spawn.
         if (my_ramparts.length == 0) {
@@ -46,9 +46,9 @@ export class ConstructionManager {
         // 2. If there are useful containers outside of our base, try to create an Extension near them
         //    If we already have more than 2 empty extensions, don't bother building more though.
         if (full_containers.length > 0 && empty_extensions.length <= 1) {
-            var nearest_full_container = findClosestByPath(my_spawn, full_containers);
-            var buildable_tiles        = get_walkable_neighbor_tiles_around(nearest_full_container.x, nearest_full_container.y);
-            var tile_to_build_on       = buildable_tiles[0];
+            let nearest_full_container = findClosestByPath(my_spawn, full_containers);
+            let buildable_tiles        = get_walkable_neighbor_tiles_around(nearest_full_container.x, nearest_full_container.y);
+            let tile_to_build_on       = buildable_tiles[0];
 
             console.log("Queued extension for construction");
             return ConstructionManager.create_extension_construction_site(tile_to_build_on);

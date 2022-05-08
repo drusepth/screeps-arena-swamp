@@ -20,7 +20,7 @@ export function loop() {
         // Build whatever one-time tables/maps based on room we need
     }
 
-    var my_creeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
+    let my_creeps  = getObjectsByPrototype(Creep).filter(creep => creep.my);
 
     // Print reports
     ThreatManager.print_threat_report();
@@ -29,11 +29,11 @@ export function loop() {
     BHive.act(Arena.get_my_spawn());
 
     // Queue creep logic
-    for (var role of Object.keys(UNIT_TYPE_BODIES)) {
-        var creeps_of_this_role = filter_creeps_by_role(my_creeps, role);
+    for (let role of Object.keys(UNIT_TYPE_BODIES)) {
+        let creeps_of_this_role = filter_creeps_by_role(my_creeps, role);
         console.log(`${role} count: ${creeps_of_this_role.length} / ${SpawnManager.desired_number_of_role(role)}`);
 
-        for (var creep of creeps_of_this_role)
+        for (let creep of creeps_of_this_role)
             UnitManager.act(creep);
     }
 }

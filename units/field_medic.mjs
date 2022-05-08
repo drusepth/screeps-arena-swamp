@@ -7,15 +7,15 @@ import { filter_creeps_by_role, filter_creeps_by_roles } from '../helpers/filter
 
 export class UFieldMedic extends UGeneric {
     static act(medic) {
-        var current_task = "no task";
-        var current_target = medic;
+        let current_task = "no task";
+        let current_target = medic;
 
-        var my_army_units = Arena.get_friendly_creeps_with_roles(['archer', 'field-medic']);
+        let my_army_units = Arena.get_friendly_creeps_with_roles(['archer', 'field-medic']);
 
-        var my_wounded_army_units = my_army_units.filter(unit => unit.hits < unit.hitsMax);
+        let my_wounded_army_units = my_army_units.filter(unit => unit.hits < unit.hitsMax);
         if (my_wounded_army_units.length > 0) {
-            var closest_wounded_army_unit = findClosestByPath(medic, my_wounded_army_units);
-            var heal_result = medic.heal(closest_wounded_army_unit);
+            let closest_wounded_army_unit = findClosestByPath(medic, my_wounded_army_units);
+            let heal_result = medic.heal(closest_wounded_army_unit);
 
             current_task = "Healing the wounded";
             current_target = closest_wounded_army_unit;
@@ -29,12 +29,12 @@ export class UFieldMedic extends UGeneric {
                 // Just pick a random archer (for now) and follow him; they all should converge anyway
                 current_task = "Following an army unit";
                 current_target = my_army_units[0];
-                var first_archer = filter_creeps_by_role(my_army_units, 'archer');
+                let first_archer = filter_creeps_by_role(my_army_units, 'archer');
                 medic.heal(medic);
                 medic.moveTo(first_archer[0], {visualizePathStyle: {stroke: '#ff00ff'}});
             } else {
                 // Go home!
-                var my_spawn = Arena.get_my_spawn();
+                let my_spawn = Arena.get_my_spawn();
                 current_task = "Headed home";
                 current_target = my_spawn;
                 medic.heal(medic);

@@ -41,7 +41,7 @@ export class ThreatManager {
 
     static max_attack_range(creep) {
         let max_range = 0;
-        for (var i = 0; i < creep.body.length; i++) {
+        for (let i = 0; i < creep.body.length; i++) {
             if (creep.body[i].type == ATTACK && creep.body[i].hits > 0)
                 max_range = 1;
 
@@ -53,7 +53,7 @@ export class ThreatManager {
     }
 
     static calculate_threat_score(creeps) {
-        var score  = this.attacker_score_multiplier() * this.get_creeps_body_part_count(creeps, ATTACK)
+        let score  = this.attacker_score_multiplier() * this.get_creeps_body_part_count(creeps, ATTACK)
             + this.ranged_attacker_score_multiplier() * this.get_creeps_body_part_count(creeps, RANGED_ATTACK)
             + this.heal_score_multiplier()            * this.get_creeps_body_part_count(creeps, HEAL)
             + this.move_score_multiplier()            * this.get_creeps_body_part_count(creeps, MOVE)
@@ -67,10 +67,10 @@ export class ThreatManager {
     }
 
     static get_creeps_body_parts_count(creeps, body_parts) {
-        var body_part_count = 0;
+        let body_part_count = 0;
 
-        for (var creep of creeps)
-            for (var i = 0; i < creep.body.length; i++)
+        for (let creep of creeps)
+            for (let i = 0; i < creep.body.length; i++)
                 if (body_parts.includes(creep.body[i].type) && creep.body[i].hits > 0)
                     body_part_count++;
 

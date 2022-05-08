@@ -13,7 +13,7 @@ export function filter_creeps_by_body_part(creeps, body_part, minimum = 1) {
 export function filter_creeps_by_body_parts(creeps, body_parts, minimum = 1) {
     return creeps.filter((creep) => {
         let part_count = 0;
-        for (var i = 0; i < creep.body.length; i++) {
+        for (let i = 0; i < creep.body.length; i++) {
             if (body_parts.includes(creep.body[i].type))
                 part_count++;
         }

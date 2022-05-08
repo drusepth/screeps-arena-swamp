@@ -15,9 +15,9 @@ import { ThreatManager } from '../managers/threat_manager';
 export class UBuilder extends UGeneric {
     static act(builder) {
         // Before anything else, we want to run away from enemy threats that might hurt us!
-        let nearby_enemy_threats = ThreatManager.enemy_threats_in_range(drone, this.safety_zone());
+        let nearby_enemy_threats = ThreatManager.enemy_threats_in_range(builder, this.safety_zone());
         if (nearby_enemy_threats.length > 0)
-            return UGeneric.flee_from_nearby_threats(drone, nearby_enemy_threats);
+            return UGeneric.flee_from_nearby_threats(builder, nearby_enemy_threats);
 
         let my_spawn        = Arena.get_my_spawn();
         let full_containers = Arena.get_mostly_full_containers_away_from(my_spawn, BHive.hive_radius());

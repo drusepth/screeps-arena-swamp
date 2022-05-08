@@ -1,8 +1,8 @@
 export function all_points_in_circle(xCenter, yCenter, radius) {
-    var points_in_circle = [];
+    let points_in_circle = [];
 
-    for (var x = xCenter - radius ; x <= xCenter; x++) {
-        for (var y = yCenter - radius ; y <= yCenter; y++) {
+    for (let x = xCenter - radius ; x <= xCenter; x++) {
+        for (let y = yCenter - radius ; y <= yCenter; y++) {
             // Since this is a circle, we can speed this up 4x (and avoid sqrt) by taking symmetric
             // points from a single quadrant.
             if ((x - xCenter) * (x - xCenter) + (y - yCenter) * (y - yCenter) <= r * r) {
