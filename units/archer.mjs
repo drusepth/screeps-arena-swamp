@@ -7,7 +7,7 @@ import { filter_creeps_by_body_part } from '../helpers/filters';
 import { flight_distance } from '../helpers/distance';
 import { WarManager } from '../managers/war_manager';
 import { BHive } from '../buildings/hive';
-import { ThreatManager } from '../managers/threat_manager.mjs';
+import { ThreatManager } from '../managers/threat_manager';
 
 export class UArcher extends UGeneric {
     static act(archer) {
@@ -35,7 +35,12 @@ export class UArcher extends UGeneric {
         if (fall_back && archer.hits < archer.hitsMax * fear_health_threshold) {
             let ticks_to_fully_heal = 2; // todo
             archer.memory.fear_ticks = ticks_to_fully_heal;
-            return UArcher.avoid_engagements(archer);
+
+            let nearby_threats = ThreatManager.enemy_threats_in_range(archer, this.safety_zone());
+            if (nearby_threats.length > 0)
+                return UGeneric.flee_from_nearby_threats(archer, nearby_threats);
+            else
+                return UArcher.avoid_engagements(archer);
         }
 
         if (enemy_creeps.length == 0) {
@@ -55,6 +60,10 @@ export class UArcher extends UGeneric {
     }
 
     static avoid_engagements(archer) {
+        // TODO: we probably actually want to act more like a Vulture here
+        // and take worker pickoffs wherever we can without engaging actual army units
+        // -- need to figure out how to group archers up first if they're gonna spread tho  
+
         let spawn = Arena.get_my_spawn();
         let distance_to_spawn = flight_distance(archer.x, archer.y, spawn.x, spawn.y);
 
@@ -64,10 +73,7 @@ export class UArcher extends UGeneric {
             console.log('idling in base; threats in base: ' + threats_in_base.length);
             if (threats_in_base.length > 0)
                 return UArcher.hunt_nearest_enemy_creep(archer, threats_in_base);
-        }
-
-        // TODO: we probably actually want to act more like a Vulture here
-        // and take worker pickoffs wherever we can without engaging actual army units            
+        }          
 
         if (archer.hits < archer.hitsMax)
             archer.heal(archer);
@@ -83,7 +89,7 @@ export class UArcher extends UGeneric {
         } else {
             let captain = Arena.get_friendly_creeps_with_role('archer')[0];
             if (archer.hits < archer.hitsMax || archer.x == captain.x && archer.y == captain.y)
-                archer.moveTo(spawn, { range: 10 });
+                archer.moveTo(spawn, { range: 4 });
             else
                 archer.moveTo(captain);
         }
@@ -122,7 +128,6 @@ export class UArcher extends UGeneric {
 
         let closest_target;
         if (enemy_medics_nearby.length > 0) {
-            console.log("Enemy medic is nearby!");
             closest_target = findClosestByPath(archer, enemy_medics_nearby);
 
         } else {

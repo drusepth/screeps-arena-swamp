@@ -20,3 +20,11 @@ export function filter_creeps_by_body_parts(creeps, body_parts, minimum = 1) {
         return part_count >= minimum;
     });
 }
+
+export function has_body_part(creep, body_part) {
+    return creep.body.some(part => part.type === body_part && part.hits > 0);
+}
+
+export function exclude_creeps_with_body_part(creeps, body_part) {
+    return creeps.filter(creep => !has_body_part(creep, body_part));
+}

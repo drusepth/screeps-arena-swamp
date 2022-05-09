@@ -1,6 +1,8 @@
 import { Arena } from '../room/arena';
 import { filter_creeps_by_role } from '../helpers/filters';
 import { UNIT_TYPE_BODIES, UNIT_BUILD_ORDER } from '../units/data.mjs';
+import { WarManager } from './war_manager.mjs';
+import { UVulture } from '../units/vulture.mjs';
 
 export class SpawnManager {
     static desired_next_unit_spawn_role() {
@@ -38,7 +40,10 @@ export class SpawnManager {
                 return 10;
 
             case 'vulture':
-                return 0;
+                // Always have 1 vulture, then scale additional vultures off how many unguarded workers the opponent spawns
+                let max_vultures = 3;
+                let desired_vultures = 1 + (WarManager.get_unguarded_enemy_workers(UVulture.safety_zone()).length * 0.34);
+                return Math.min(desired_vultures, max_vultures);
 
             case 'builder':
                 // After we've built at least 1 extension, don't bother replenishing dead builders

@@ -1,5 +1,6 @@
 import { Visual } from '/game/visual';
 import { searchPath } from 'game/path-finder';
+import { HEAL } from '/game/constants';
 
 import { ThreatManager } from '../managers/threat_manager';
 
@@ -30,6 +31,15 @@ export class UGeneric {
         }));
         let escape_route = searchPath(creep, active_threats, { "flee": true });
         creep.moveTo(escape_route.path[0]);
+
+        let can_heal = false;
+        for (let i = 0; i < creep.body.length; i++) {
+            if (creep.body[i].type == HEAL && creep.body[i].hits > 0)
+                can_heal = true;
+        }
+
+        if (can_heal)
+            creep.heal(creep);
 
         UGeneric.display_action_message_with_target_line(creep,
             creep.memory.role + ': Fleeing from threats!',
