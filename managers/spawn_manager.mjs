@@ -42,7 +42,7 @@ export class SpawnManager {
             case 'vulture':
                 // Always have 1 vulture, then scale additional vultures off how many unguarded workers the opponent spawns
                 let max_vultures = 3;
-                let desired_vultures = 1 + (WarManager.get_unguarded_enemy_workers(UVulture.safety_zone()).length * 0.34);
+                let desired_vultures = 1 + (WarManager.get_unguarded_enemy_workers(UVulture.safety_zone()).length * 0.2);
                 return Math.min(desired_vultures, max_vultures);
 
             case 'builder':

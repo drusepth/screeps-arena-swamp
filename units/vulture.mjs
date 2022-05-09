@@ -19,12 +19,11 @@ export class UVulture extends UGeneric {
             return UGeneric.flee_from_nearby_threats(vulture, nearby_enemy_threats);
 
         let enemy_workers = EconomyManager.get_enemy_workers();
-        console.log("total enemy workers: " + enemy_workers.length);
 
         if (enemy_workers.length == 0) {
             // if there are no workers left to hunt, act like a standard melee war unit (TBD)
             console.log("No more workers to hunt - joining the standard army");
-            return;
+            return UGeneric.flee_from_nearby_threats(vulture, ThreatManager.get_enemy_attackers());
         }
 
         let unguarded_enemy_workers = WarManager.get_unguarded_enemy_workers(this.safety_zone());
