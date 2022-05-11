@@ -40,26 +40,28 @@ export class ConstructionManager {
         // 1. If we don't have a rampart yet, start construction of one at our spawn.
         if (my_ramparts.length == 0) {
             console.log("Queued rampart for construction");
-            return ConstructionManager.create_rampart_construction_site(my_spawn)
+            return ConstructionManager.create_rampart_construction_site(my_spawn);
         }
 
         // 2. If there are useful containers outside of our base, try to create an Extension near them
         //    If we already have more than 2 empty extensions, don't bother building more though.
         if (full_containers.length > 0 && empty_extensions.length <= 1) {
             let nearest_full_container = findClosestByPath(my_spawn, full_containers);
-            let buildable_tiles        = get_walkable_neighbor_tiles_around(nearest_full_container.x, nearest_full_container.y);
+            let buildable_tiles        = get_walkable_neighbor_tiles_around(nearest_full_container.x, nearest_full_container.y, 1);
             let tile_to_build_on       = buildable_tiles[0];
 
             console.log("Queued extension for construction");
             return ConstructionManager.create_extension_construction_site(tile_to_build_on);
         }
+
+        return null;
     }
 
     static create_rampart_construction_site(location) {
-        return createConstructionSite({x: location.x, y: location.y}, StructureRampart);
+        return createConstructionSite({x: location.x, y: location.y}, StructureRampart).object;
     }
 
     static create_extension_construction_site(location) {
-        return createConstructionSite({x: location.x, y: location.y}, StructureExtension);
+        return createConstructionSite({x: location.x, y: location.y}, StructureExtension).object;
     }
 }

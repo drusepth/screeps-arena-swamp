@@ -11,6 +11,7 @@ import { BHive } from '../buildings/hive';
 import { flight_distance } from '../helpers/distance';
 import { ConstructionManager } from '../managers/construction_manager';
 import { ThreatManager } from '../managers/threat_manager';
+import { TrafficManager } from '../managers/traffic_manager';
 
 export class UBuilder extends UGeneric {
     static act(builder) {
@@ -57,8 +58,12 @@ export class UBuilder extends UGeneric {
         } else {
             // If there are no existing construction sites, we should find something new to build.
             let new_site = ConstructionManager.create_next_construction_site();
-            if (new_site) {
-                builder.moveTo(new_site);
+            if (new_site.x != undefined && new_site.y != undefined) {
+                let cost_matrix = TrafficManager.threat_avoidant_cost_matrix();
+                let route = searchPath(builder, new_site, 
+                    { swampCost: 2, costMatrix: cost_matrix }
+                );
+                builder.moveTo(route.path[0]);
 
                 UBuilder.display_action_message_with_target_line(builder,
                     builder.memory.role + ': Headed to new construction site',
@@ -86,10 +91,15 @@ export class UBuilder extends UGeneric {
 
         } else {
             let build_result = builder.build(construction_site);
-            if (build_result == ERR_NOT_IN_RANGE)
-                builder.moveTo(construction_site);
-            else
+            if (build_result == ERR_NOT_IN_RANGE) {
+                let cost_matrix = TrafficManager.threat_avoidant_cost_matrix();
+                let route = searchPath(builder, construction_site, 
+                    { swampCost: 2, costMatrix: cost_matrix }
+                );
+                builder.moveTo(route.path[0]);
+            } else {
                 console.log('site build result = ' + build_result);
+            }
         }
 
     }

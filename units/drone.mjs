@@ -1,9 +1,11 @@
 import { findClosestByPath } from '/game/utils';
 import { RESOURCE_ENERGY, OK, ERR_NOT_IN_RANGE } from '/game/constants';
+import { searchPath } from 'game/path-finder';
 
 import { UGeneric } from './generic_unit';
 import { Arena } from '../room/arena';
 import { ThreatManager } from '../managers/threat_manager';
+import { TrafficManager } from '../managers/traffic_manager';
 
 export class UDrone extends UGeneric {
     static act(drone) {
@@ -34,7 +36,13 @@ export class UDrone extends UGeneric {
             case ERR_NOT_IN_RANGE:
                 current_task = 'Moving to closest container';
                 current_target = closest_container;
-                drone.moveTo(closest_container);
+                
+                let cost_matrix = TrafficManager.threat_avoidant_cost_matrix();
+                let route = searchPath(drone, closest_container, 
+                    { swampCost: 2, costMatrix: cost_matrix }
+                );
+                drone.moveTo(route.path[0]);
+
                 break;
 
             default:
@@ -63,7 +71,12 @@ export class UDrone extends UGeneric {
             let nearest_dropoff = findClosestByPath(drone, non_full_dropoffs);
             if (drone.transfer(nearest_dropoff, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 current_task = 'Returning to ' + nearest_dropoff.constructor.name;
-                drone.moveTo(nearest_dropoff);
+                
+                let cost_matrix = TrafficManager.threat_avoidant_cost_matrix();
+                let route = searchPath(drone, nearest_dropoff, 
+                    { swampCost: 2, costMatrix: cost_matrix }
+                );
+                drone.moveTo(route.path[0]);
             } else {
                 current_task = 'Unloading energy to ' + nearest_dropoff.constructor.name;
             }

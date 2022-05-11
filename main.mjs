@@ -14,6 +14,7 @@ import { filter_creeps_by_role } from './helpers/filters';
 import { UNIT_TYPE_BODIES } from './units/data';
 import { UGeneric } from './units/generic_unit';
 import { ThreatManager } from './managers/threat_manager';
+import { TrafficManager } from './managers/traffic_manager';
 
 export function loop() {
     if (getTicks() == 1) {
@@ -24,7 +25,7 @@ export function loop() {
 
     // Print reports
     ThreatManager.print_threat_report();
-    
+
     // Queue building logic
     BHive.act(Arena.get_my_spawn());
 

@@ -3,6 +3,7 @@ import { searchPath } from 'game/path-finder';
 import { HEAL } from '/game/constants';
 
 import { ThreatManager } from '../managers/threat_manager';
+import { TrafficManager } from '../managers/traffic_manager';
 
 export class UGeneric {
     static display_action_message_with_target_line(creep, message, target) {
@@ -31,7 +32,10 @@ export class UGeneric {
         }));
         // BUG: we need to exclude creeps and other non-passable entities in searchPath args
         // TODO: we need to weight swampCost dependent on MOVE body ratio
-        let escape_route = searchPath(creep, active_threats, { "flee": true, swampCost: 2 });
+        let cost_matrix = TrafficManager.threat_avoidant_cost_matrix();
+        let escape_route = searchPath(creep, active_threats, 
+            { "flee": true, swampCost: 2, costMatrix: cost_matrix }
+        );
         creep.moveTo(escape_route.path[0]);
 
         let can_heal = false;
@@ -50,6 +54,6 @@ export class UGeneric {
     }
 
     static safety_zone() {
-        return 6;
+        return 5;
     }
 }

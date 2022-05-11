@@ -1,9 +1,8 @@
 import { getTerrainAt } from '/game/utils';
 import { TERRAIN_WALL, TERRAIN_SWAMP } from '/game/constants';
 
-export function get_walkable_neighbor_tiles_around(originX, originY) {
+export function get_walkable_neighbor_tiles_around(originX, originY, radius) {
     let walkable_neighbor_tiles = [];
-    let radius = 1;
 
     for (let y = originY - radius; y <= originY + radius; y++) {
         for (let x = originX - radius; x <= originX + radius; x++) {
