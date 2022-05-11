@@ -70,7 +70,6 @@ export class UArcher extends UGeneric {
         // Quick check here: if we're at base and there are threats nearby, we just have to engage
         if (distance_to_spawn <= BHive.hive_radius()) {
             let threats_in_base = ThreatManager.enemy_threats_in_range(spawn, BHive.hive_radius() + 3);
-            console.log('idling in base; threats in base: ' + threats_in_base.length);
             if (threats_in_base.length > 0)
                 return UArcher.hunt_nearest_enemy_creep(archer, threats_in_base);
         }          

@@ -6,7 +6,7 @@ import { Arena } from '../room/arena';
 import { EconomyManager } from '../managers/economy_manager';
 import { BHive } from '../buildings/hive';
 import { ThreatManager } from '../managers/threat_manager';
-import { WarManager } from '../managers/war_manager.mjs';
+import { WarManager } from '../managers/war_manager';
 
 export class UVulture extends UGeneric {
     static act(vulture) {
@@ -20,10 +20,9 @@ export class UVulture extends UGeneric {
 
         let enemy_workers = EconomyManager.get_enemy_workers();
 
+        // if there are no workers left to hunt, go threaten spawn to pull attackers back
         if (enemy_workers.length == 0) {
-            // if there are no workers left to hunt, act like a standard melee war unit (TBD)
-            console.log("No more workers to hunt - joining the standard army");
-            return UGeneric.flee_from_nearby_threats(vulture, ThreatManager.get_enemy_attackers());
+            return UVulture.hunt(vulture, Arena.get_enemy_spawn());
         }
 
         let unguarded_enemy_workers = WarManager.get_unguarded_enemy_workers(this.safety_zone());
@@ -60,7 +59,7 @@ export class UVulture extends UGeneric {
 
         UVulture.display_action_message_with_target_line(
             vulture,
-            vulture.memory.role + ': Attacking enemy worker!',
+            vulture.memory.role + ': Attacking enemy ' + victim.constructor.name + '!',
             victim
         );
     }

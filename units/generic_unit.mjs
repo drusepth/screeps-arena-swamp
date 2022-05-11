@@ -29,7 +29,9 @@ export class UGeneric {
             "pos":   { x: threat.x, y: threat.y },
             "range": 5 * this.safety_zone() + ThreatManager.max_attack_range(threat)
         }));
-        let escape_route = searchPath(creep, active_threats, { "flee": true });
+        // BUG: we need to exclude creeps and other non-passable entities in searchPath args
+        // TODO: we need to weight swampCost dependent on MOVE body ratio
+        let escape_route = searchPath(creep, active_threats, { "flee": true, swampCost: 2 });
         creep.moveTo(escape_route.path[0]);
 
         let can_heal = false;

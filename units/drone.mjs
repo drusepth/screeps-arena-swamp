@@ -39,7 +39,7 @@ export class UDrone extends UGeneric {
 
             default:
                 console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-                console.log('Unknown error while harvesting: ' + harvest_result);
+                console.log('Unknown error while ' + drone.id + ' harvesting: ' + harvest_result);
         }
 
         UDrone.display_action_message_with_target_line(
