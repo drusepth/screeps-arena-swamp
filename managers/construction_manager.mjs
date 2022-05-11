@@ -64,4 +64,14 @@ export class ConstructionManager {
     static create_extension_construction_site(location) {
         return createConstructionSite({x: location.x, y: location.y}, StructureExtension).object;
     }
+
+    static remove_duplicate_construction_sites() {
+        let my_construction_sites = this.get_my_construction_sites();
+        let my_extensions = this.get_my_extensions();
+
+        for (let site of my_construction_sites)
+            for (let extension of my_extensions)
+                if (site.x == extension.x && site.y == extension.y)
+                    site.remove();
+    }
 }

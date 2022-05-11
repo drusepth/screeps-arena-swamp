@@ -74,6 +74,9 @@ export class UBuilder extends UGeneric {
                 UDrone.act(builder);
             }
         }
+
+        // Other cleanup
+        ConstructionManager.remove_duplicate_construction_sites();
     }
 
     static continue_construction(builder, construction_site) {

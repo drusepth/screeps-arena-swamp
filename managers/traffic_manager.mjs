@@ -52,7 +52,7 @@ export class TrafficManager {
                     { x: attacker.x - (safety_range / 2), y: attacker.y - (safety_range / 2) },
                     safety_range,
                     safety_range,
-                    { fill: '#ff0000', opacity: 0.1 }
+                    { fill: '#bb0000', opacity: 0.1 }
                 );
             }
         }
