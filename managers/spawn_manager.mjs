@@ -47,7 +47,7 @@ export class SpawnManager {
 
             case 'builder':
                 // After we've built at least 1 extension, don't bother replenishing dead builders
-                return 1 - Arena.get_my_extensions().length;
+                return 2 - Arena.get_my_extensions().length;
         }
     }
 }

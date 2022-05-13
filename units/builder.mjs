@@ -12,6 +12,7 @@ import { flight_distance } from '../helpers/distance';
 import { ConstructionManager } from '../managers/construction_manager';
 import { ThreatManager } from '../managers/threat_manager';
 import { TrafficManager } from '../managers/traffic_manager';
+import { get_walkable_neighbor_tiles_around } from '../helpers/neighbors.mjs';
 
 export class UBuilder extends UGeneric {
     static act(builder) {
@@ -56,8 +57,26 @@ export class UBuilder extends UGeneric {
             );
 
         } else {
+            // 2. If we are next to a RESOURCE pile of at least 205 energy, build an Extension next to it
+            let nearby_piles = Arena.get_resource_piles(RESOURCE_ENERGY).filter(pile => {
+                flight_distance(builder.x, builder.y, pile.x, pile.y) < 4 && pile.amount >= 205
+            });
+            let priority_pile = null;
+            if (nearby_piles.length > 0) {
+                let closest_pile = findClosestByPath(builder, nearby_piles);
+                let neighbors = get_walkable_neighbor_tiles_around(closest_pile.x, closest_pile.y, 2);
+                if (neighbors.length > 0) {
+                    priority_pile = createConstructionSite({ x: neighbors[0].x, y: neighbors[0].y, StructureExtension});
+                }
+            }
+
             // If there are no existing construction sites, we should find something new to build.
-            let new_site = ConstructionManager.create_next_construction_site();
+            let new_site;
+            if (priority_pile == null)
+                new_site = ConstructionManager.create_next_construction_site();
+            else
+                new_site = priority_pile
+
             if (new_site != undefined && new_site.x != undefined && new_site.y != undefined) {
                 let cost_matrix = TrafficManager.threat_avoidant_cost_matrix();
                 let route = searchPath(builder, new_site, 
