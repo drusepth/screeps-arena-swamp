@@ -58,7 +58,7 @@ export class UBuilder extends UGeneric {
         } else {
             // If there are no existing construction sites, we should find something new to build.
             let new_site = ConstructionManager.create_next_construction_site();
-            if (new_site.x != undefined && new_site.y != undefined) {
+            if (new_site != undefined && new_site.x != undefined && new_site.y != undefined) {
                 let cost_matrix = TrafficManager.threat_avoidant_cost_matrix();
                 let route = searchPath(builder, new_site, 
                     { swampCost: 2, costMatrix: cost_matrix }

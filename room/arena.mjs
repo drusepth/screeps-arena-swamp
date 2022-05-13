@@ -1,5 +1,5 @@
 import { getObjectsByPrototype } from '/game/utils';
-import { Creep, StructureContainer, StructureSpawn, StructureExtension } from '/game/prototypes';
+import { Creep, StructureContainer, StructureSpawn, StructureExtension, Resource } from '/game/prototypes';
 import { RESOURCE_ENERGY } from '/game/constants';
 import { filter_creeps_by_role, filter_creeps_by_roles, filter_creeps_by_body_part, filter_creeps_by_body_parts } from '../helpers/filters';
 import { flight_distance } from '../helpers/distance';
@@ -27,6 +27,13 @@ export class Arena {
         });
     
         return containers;
+    }
+
+    static get_resource_piles(resource_type) {
+        // Since we're always dealing with energy here we can skip the filter call, but if we
+        // switch to a game mode with multiple resources we probably want to pass the resource in
+        // as a parameter to filter on.
+        return getObjectsByPrototype(Resource);
     }
 
     static get_mostly_full_containers_away_from(origin, distance) {

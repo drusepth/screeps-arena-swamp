@@ -16,6 +16,7 @@ export class ThreatManager {
         let enemies_in_range = [];
 
         for (let enemy of enemy_attackers) {
+            // IMPROVE: we should switch to a path distance
             if (flight_distance(enemy.x, enemy.y, origin.x, origin.y) <= range)
                 enemies_in_range.push(enemy);
         }

@@ -1,5 +1,5 @@
 import { getObjectsByPrototype } from '/game/utils';
-import { Creep, StructureContainer, Structure} from '/game/prototypes';
+import { Creep, StructureContainer, StructureTower, StructureWall, StructureSpawn, StructureExtension } from '/game/prototypes';
 import { Visual } from '/game/visual';
 
 import { Arena } from '../room/arena';
@@ -16,8 +16,8 @@ export class TrafficManager {
     // A cost matrix that weights tiles near enemy attackers much higher so we stay away from them
     static threat_avoidant_cost_matrix() {
         let cost_matrix = new CostMatrix();
-        let avoidant_tile_weight   = 150;
-        let impassable_tile_weight = 255;
+        const avoidant_tile_weight   = 150;
+        const impassable_tile_weight = 255;
 
         let draw_visual = true;
         if (draw_visual) {
@@ -25,13 +25,14 @@ export class TrafficManager {
             threat_avoidant_cost_matrix_visualizer.clear();
         }
 
-        // Add all creeps as impassable tiles
-        for (let creep of getObjectsByPrototype(Creep))
-            cost_matrix.set(creep.x, creep.x, impassable_tile_weight);
-
-        // Add all structures as impassable tiles
-        for (let structure of getObjectsByPrototype(Structure))
-            cost_matrix.set(structure.x, structure.x, impassable_tile_weight);
+        // Add all impassable objects as impassable tiles
+        let impassable_types = [
+            Creep, StructureTower, StructureWall, StructureSpawn,
+            StructureExtension, StructureContainer
+        ];
+        for (let impassable_prototype of impassable_types)
+            for (let structure of getObjectsByPrototype(impassable_prototype))
+                cost_matrix.set(structure.x, structure.y, impassable_tile_weight);
 
         // Add variable ranges around all enemy attackers
         let enemy_attackers = ThreatManager.get_enemy_attackers();

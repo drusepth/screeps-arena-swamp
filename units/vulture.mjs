@@ -23,6 +23,7 @@ export class UVulture extends UGeneric {
         let enemy_workers = EconomyManager.get_enemy_workers();
 
         // if there are no workers left to hunt, go threaten spawn to pull attackers back
+        // TODO we can also attack enemy extensions if unguarded
         if (enemy_workers.length == 0) {
             return UVulture.hunt(vulture, Arena.get_enemy_spawn());
         }
