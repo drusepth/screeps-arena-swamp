@@ -3,14 +3,6 @@ import { ThreatManager } from './threat_manager';
 import { EconomyManager } from './economy_manager.mjs';
 
 export class WarManager {
-    static full_army_tick_timing() {
-        // TODO
-        let current_tick = 0;
-        let time_to_finish_full_army = 285;
-
-        return current_tick + time_to_finish_full_army;
-    }
-
     static predicted_victory() {
         let my_threat_score    = ThreatManager.get_my_threat_score();
         let enemy_threat_score = ThreatManager.get_enemy_threat_score();

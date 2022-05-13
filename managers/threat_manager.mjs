@@ -87,7 +87,7 @@ export class ThreatManager {
     }
 
     static ranged_attacker_score_multiplier() {
-        return 130;
+        return 140;
     }
 
     static heal_score_multiplier() {

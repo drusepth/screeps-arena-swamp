@@ -28,10 +28,6 @@ export class UArcher extends UGeneric {
         if (archer.hits > archer.hitsMax * fear_health_threshold)
             fall_back = false;
 
-        // If we don't have a sufficient army to attack, don't
-        if (getTicks() < WarManager.full_army_tick_timing())
-            return UArcher.avoid_engagements(archer);
-
         if (fall_back && archer.hits < archer.hitsMax * fear_health_threshold) {
             let ticks_to_fully_heal = 2; // todo
             archer.memory.fear_ticks = ticks_to_fully_heal;
