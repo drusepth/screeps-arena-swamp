@@ -1,20 +1,20 @@
 import { getObjectsByPrototype, getTicks } from '/game/utils';
 import { Creep } from '/game/prototypes';
 
-import { UDrone } from './units/drone';
-import { UArcher } from './units/archer';
-import { UFieldMedic } from './units/field_medic';
-import { BHive }  from './buildings/hive';
-import { Arena } from './room/arena';
+import { UDrone } from './core/units/drone';
+import { UArcher } from './core/units/archer';
+import { UFieldMedic } from './core/units/field_medic';
+import { BHive }  from './core/buildings/hive';
+import { Arena } from './core/room/arena';
 
-import { SpawnManager } from './managers/spawn_manager';
-import { UnitManager } from './managers/unit_manager';
+import { SpawnManager } from './core/managers/spawn_manager';
+import { UnitManager } from './core/managers/unit_manager';
 
-import { filter_creeps_by_role } from './helpers/filters';
-import { UNIT_TYPE_BODIES } from './units/data';
-import { UGeneric } from './units/generic_unit';
-import { ThreatManager } from './managers/threat_manager';
-import { TrafficManager } from './managers/traffic_manager';
+import { filter_creeps_by_role } from './core/helpers/filters';
+import { UNIT_TYPE_BODIES } from './core/units/data';
+import { UGeneric } from './core/units/generic_unit';
+import { ThreatManager } from './core/managers/threat_manager';
+import { TrafficManager } from './core/managers/traffic_manager';
 
 export function loop() {
     if (getTicks() == 1) {
